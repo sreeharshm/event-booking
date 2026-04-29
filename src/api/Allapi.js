@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const BASE_URLs = "event-booking-backend-production-63dd.up.railway.app"; // no trailing slash
+export const BASE_URLs = "https://event-booking-backend-production-63dd.up.railway.app"; // no trailing slash
 
 
 const authHeader = () => {
@@ -113,16 +113,15 @@ export const getAllUser = () => {
 
 
 export const sendOTP = (data) => {
-  return axios.post(`${BASE_URLs}password-reset/send-otp/`, data);
+  return axios.post(`${BASE_URLs}/password-reset/send-otp/`, data);
 };
 
 export const verifyOTP = (data) => {
-  return axios.post(`${BASE_URLs}password-reset/confirm/`, data);
+  return axios.post(`${BASE_URLs}/password-reset/confirm/`, data);
 };
 
-
 export const resetPassword = (data) => {
-  return axios.post(`${BASE_URLs}password-reset/reset/`, data);
+  return axios.post(`${BASE_URLs}/password-reset/reset/`, data);
 };
 
 
