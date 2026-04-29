@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const BASE_URLs = "http://127.0.0.1:8000"; // no trailing slash
+export const BASE_URLs = "event-booking-backend-production-63dd.up.railway.app"; // no trailing slash
 
 
 const authHeader = () => {
