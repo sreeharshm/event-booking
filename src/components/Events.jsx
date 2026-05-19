@@ -32,7 +32,7 @@ function Events() {
                     .filter((event) =>
                         event.title.toLowerCase().startsWith(searchQuery.toLowerCase())
                     )
-                    .slice(0, 5); 
+                    .slice(0, 5);
                 setFilteredResults(results);
                 setIsDropdownOpen(true);
                 setActiveIndex(-1);
@@ -55,14 +55,14 @@ function Events() {
     const fetchEvents = async () => {
         setLoading(true);
 
-        try{
-        const res = await getAllEvent()
-        setEvents(res.data)
+        try {
+            const res = await getAllEvent()
+            setEvents(res.data)
         }
-        catch (err){
-            console.error("event fetching failed", err); 
+        catch (err) {
+            console.error("event fetching failed", err);
         }
-        finally{
+        finally {
             setLoading(false)
         }
     };
@@ -77,7 +77,7 @@ function Events() {
             .then((res) => {
                 const message = res.status === 201 ? "Added to favorites! ❤️" : "Removed from favorites! 💔";
                 alert(message);
-                fetchEvents(); 
+                fetchEvents();
             })
             .catch((err) => console.error("Favorite failed", err));
     };
@@ -144,7 +144,7 @@ function Events() {
                     <button onClick={() => navigate('/home')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">Home</button>
                     <button className="hidden lg:block text-sm font-bold text-rose-500 underline underline-offset-8 decoration-2">Events </button>
                     <button onClick={() => navigate('/mybooking')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">My Booking</button>
-                    
+
                     <button onClick={() => navigate('/myprofile')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">My profile</button><button
                         onClick={() => { localStorage.clear(); navigate('/login'); }}
                         className="flex items-center gap-2 text-white text-xs font-bold bg-rose-500 hover:bg-rose-600 px-5 py-2.5 rounded-full transition-all shadow-md"
@@ -206,6 +206,7 @@ function Events() {
                                             <h3 className="text-lg font-black text-gray-800 line-clamp-1 group-hover:text-rose-500 transition-colors">
                                                 {event.title}
                                             </h3>
+
                                             <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mt-1">
                                                 {event.location}
                                             </p>
@@ -216,8 +217,30 @@ function Events() {
                                             <span>{new Date(event.date).toDateString()}</span>
                                         </div>
 
-                                        <button className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-rose-500 transition-all active:scale-95">
-                                            Book Now
+                                        {/* Remaining Tickets */}
+                                        <div className="flex items-center justify-between">
+                                            <span className={`text-sm font-bold ${event.capacity <= 5
+                                                ? "text-red-500"
+                                                : "text-green-600"
+                                                }`}>
+                                                {event.capacity} Tickets Left
+                                            </span>
+
+                                            {event.capacity === 0 && (
+                                                <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full font-bold">
+                                                    SOLD OUT
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <button
+                                            disabled={event.capacity === 0}
+                                            className={`w-full py-3 rounded-xl font-bold transition-all active:scale-95 ${event.capacity === 0
+                                                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                                : "bg-gray-900 text-white hover:bg-rose-500"
+                                                }`}
+                                        >
+                                            {event.capacity === 0 ? "Sold Out" : "Book Now"}
                                         </button>
                                     </div>
                                 </div>
