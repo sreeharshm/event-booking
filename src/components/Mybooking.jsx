@@ -113,6 +113,7 @@ function Mybooking() {
                     <button onClick={() => navigate('/home')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">Home</button>
                     <button onClick={() => navigate('/event')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">Events</button>
                     <button className="hidden lg:block text-sm font-bold text-rose-500 underline underline-offset-8 decoration-2">My Booking</button>
+                    <button onClick={() => navigate('/myprofile')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">My profile</button>
                     <button
                         onClick={() => { localStorage.clear(); navigate('/login'); }}
                         className="flex items-center gap-2 text-white text-xs font-bold bg-rose-500 hover:bg-rose-600 px-5 py-2.5 rounded-full transition-all shadow-md"

@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { addEvent, BASE_URLs, editEvent, getAllEvent, removeEvent } from "../api/Allapi";
-import { Plus, Trash2, Edit3, MapPin, Calendar, Users, X, Eye, ExternalLink, Ticket, LogOut } from "lucide-react";
+import { Plus, Trash2, Edit3, MapPin, Calendar, Users, X, Eye, ExternalLink, Ticket, LogOut, Upload } from "lucide-react";
 
 function Eventadd() {
     const [eventData, setEventData] = useState({
-        title: "", description: "", price: "", capacity: "", location: "", date: "", date_end: "", image: null,
+        title: "", description: "", price: "", capacity: "", location: "", date: "", date_end: "", type: "", image: null,
     });
 
     const [eventDataEdit, setEventDataEdit] = useState({
-        id: "", title: "", description: "", price: "", capacity: "", location: "", date: "", date_end: "", image: ""
+        id: "", title: "", description: "", price: "", capacity: "", location: "", date: "", date_end: "", type: "", image: ""
     });
 
     const [events, setEvents] = useState([]);
-    const [modal, setModal] = useState(false); // Edit Modal
-    const [viewModal, setViewModal] = useState(false); // View Description Modal
-    const [selectedEvent, setSelectedEvent] = useState(null); // Data for View Modal
+    const [modal, setModal] = useState(false);
+    const [viewModal, setViewModal] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
     const [showAddForm, setShowAddForm] = useState(false);
 
     useEffect(() => {
@@ -29,47 +29,98 @@ function Eventadd() {
 
     const handleChange = (e) => setEventData({ ...eventData, [e.target.name]: e.target.value });
     const handleChangeEdit = (e) => setEventDataEdit({ ...eventDataEdit, [e.target.name]: e.target.value });
+
     const handleFileChange = (e) => setEventData({ ...eventData, image: e.target.files[0] });
+    const handleFileChangeEdit = (e) => setEventDataEdit({ ...eventDataEdit, image: e.target.files[0] });
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData();
-        Object.keys(eventData).forEach(key => {
-            if (eventData[key]) formData.append(key, eventData[key]);
-        });
 
-        addEvent(formData)
-            .then(() => {
-                alert("Event Created Successfully!");
-                setEventData({ title: "", description: "", price: "", capacity: "", location: "", date: "", date_end: "", image: null });
-                setShowAddForm(false);
-                fetchEvent();
-            })
-            .catch((err) => console.error(err));
-    };
-
-    const handleEdit = (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-
-        Object.keys(eventDataEdit).forEach(key => {
-            if (key === 'id') return;
+        // Loop through your form state (assuming it's called eventData)
+        Object.keys(eventData).forEach((key) => {
             if (key === 'image') {
-                if (eventDataEdit.image instanceof File) formData.append('image', eventDataEdit.image);
-            } else if ((key === 'date' || key === 'date_end') && eventDataEdit[key]) {
-                formData.append(key, new Date(eventDataEdit[key]).toISOString());
-            } else if (eventDataEdit[key] !== "") {
-                formData.append(key, eventDataEdit[key]);
+                if (eventData.image instanceof File) {
+                    formData.append('image', eventData.image);
+                }
+            } else if (key === 'date' || key === 'date_end') {
+                // Keep the raw YYYY-MM-DD string from the input field
+                if (eventData[key]) {
+                    formData.append(key, eventData[key]);
+                }
+            } else if (eventData[key] !== "") {
+                formData.append(key, eventData[key]);
             }
         });
 
-        editEvent(eventDataEdit.id, formData)
-            .then(() => {
-                setModal(false);
-                fetchEvent();
+        // Replace 'addEvent' with whatever your creation API function is called
+        addEvent(formData)
+            .then((res) => {
+                alert("Event Created Successfully!");
+                // Reset form or navigate away here
             })
-            .catch((err) => console.log(err.response?.data));
+            .catch((err) => {
+                // Safer logging so you don't get 'undefined'
+                if (err.response) {
+                    console.error("Server Error Data:", err.response.data);
+                    console.error("Server Status:", err.response.status);
+                } else if (err.request) {
+                    console.error("No response received from server:", err.request);
+                } else {
+                    console.error("Error setting up request:", err.message);
+                }
+                alert("Failed to add event. Check console for details.");
+            });
     };
+
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const formData = new FormData();
+
+            Object.keys(eventDataEdit).forEach((key) => {
+                if (key === "id") return;
+
+                if (key === "image") {
+                    if (eventDataEdit.image instanceof File) {
+                        formData.append("image", eventDataEdit.image);
+                    }
+                } else if (key === "date" || key === "date_end") {
+                    if (eventDataEdit[key]) {
+                        formData.append(key, eventDataEdit[key]);
+                    }
+                } else if (eventDataEdit[key] !== "") {
+                    formData.append(key, eventDataEdit[key]);
+                }
+            });
+
+            await editEvent(eventDataEdit.id, formData);
+
+            alert("Event Updated Successfully!");
+
+            // FIXED
+            setModal(false);
+
+            // FIXED
+            fetchEvent();
+
+        } catch (err) {
+            console.error("Full Error:", err);
+
+            if (err.response) {
+                console.error("Server Error:", err.response.data);
+                console.error("Status:", err.response.status);
+            } else if (err.request) {
+                console.error("No response received:", err.request);
+            } else {
+                console.error("Error message:", err.message);
+            }
+
+            alert("Failed to update event.");
+        }
+    };
+
 
     const handleRemove = (id) => {
         if (window.confirm("Are you sure you want to delete this event?")) {
@@ -124,13 +175,25 @@ function Eventadd() {
                     {showAddForm && (
                         <div className="bg-white p-6 rounded-2xl border border-gray-200 mb-8 shadow-sm">
                             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <input name="title" placeholder="Event Title" className="p-2.5 bg-gray-50 rounded-lg border border-gray-200" onChange={handleChange} required />
-                                <input name="location" placeholder="Location" className="p-2.5 bg-gray-50 rounded-lg border border-gray-200" onChange={handleChange} required />
+                                <input name="title" value={eventData.title} placeholder="Event Title" className="p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm" onChange={handleChange} required />
+                                <input name="location" value={eventData.location} placeholder="Location" className="p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm" onChange={handleChange} required />
+
+                                {/* Added type input field for creation form */}
+                                <input name="type" value={eventData.type} placeholder="Event Type (e.g., Concert, Seminar)" className="p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm" onChange={handleChange} required />
+
                                 <div className="flex gap-2">
-                                    <input name="date" type="date" className="w-1/2 p-2.5 bg-gray-50 rounded-lg border border-gray-200" onChange={handleChange} required />
-                                    <input name="date_end" type="date" className="w-1/2 p-2.5 bg-gray-50 rounded-lg border border-gray-200" onChange={handleChange} />
+                                    <input name="date" value={eventData.date} type="date" className="w-1/2 p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm" onChange={handleChange} required />
+                                    <input name="date_end" value={eventData.date_end} type="date" className="w-1/2 p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm" onChange={handleChange} />
                                 </div>
-                                <textarea name="description" placeholder="Description" className="md:col-span-3 p-2.5 bg-gray-50 rounded-lg border border-gray-200 h-20" onChange={handleChange} required />
+                                <input name="price" value={eventData.price} type="number" placeholder="Price (₹)" className="p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm" onChange={handleChange} required />
+                                <input name="capacity" value={eventData.capacity} type="number" placeholder="Capacity" className="p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm" onChange={handleChange} required />
+
+                                <div className="flex items-center gap-2 bg-gray-50 rounded-lg border border-gray-200 px-3 py-1.5">
+                                    <Upload size={16} className="text-gray-400" />
+                                    <input type="file" accept="image/*" className="text-xs file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-rose-50 file:text-rose-600 hover:file:bg-rose-100 cursor-pointer w-full text-gray-500" onChange={handleFileChange} required />
+                                </div>
+
+                                <textarea name="description" value={eventData.description} placeholder="Description" className="md:col-span-3 p-2.5 bg-gray-50 rounded-lg border border-gray-200 h-20 text-sm" onChange={handleChange} required />
                                 <button type="submit" className="md:col-span-3 bg-gray-900 text-white py-3 rounded-xl font-bold">Create Event</button>
                             </form>
                         </div>
@@ -147,20 +210,24 @@ function Eventadd() {
                                     <th className="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
+
                             <tbody className="divide-y divide-gray-100">
                                 {events.map((event) => (
                                     <tr key={event.id} className="hover:bg-gray-50/50 group">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <img src={event.image ? `${BASE_URLs}${event.image}` : "/placeholder.png"} className="w-10 h-10 rounded-lg object-cover" />
+                                                <img src={event.image ? `${BASE_URLs}${event.image}` : "/placeholder.png"} className="w-10 h-10 rounded-lg object-cover" alt="" />
                                                 <div>
                                                     <p className="text-sm font-bold text-gray-900">{event.title}</p>
-                                                    <button
-                                                        onClick={() => { setSelectedEvent(event); setViewModal(true); }}
-                                                        className="text-[10px] text-rose-500 font-bold hover:underline flex items-center gap-1"
-                                                    >
-                                                        <Eye size={10} /> View Description
-                                                    </button>
+                                                    <div className="flex items-center gap-2 mt-0.5">
+                                                        <span className="text-[9px] bg-gray-100 text-gray-600 font-bold px-1.5 py-0.5 rounded uppercase">{event.type || "Event"}</span>
+                                                        <button
+                                                            onClick={() => { setSelectedEvent(event); setViewModal(true); }}
+                                                            className="text-[10px] text-rose-500 font-bold hover:underline flex items-center gap-1"
+                                                        >
+                                                            <Eye size={10} /> View Description
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -173,9 +240,9 @@ function Eventadd() {
                                         </td>
                                         <td className="px-6 py-4 font-black text-gray-700 text-sm">₹{event.price}</td>
                                         <td className="px-6 py-4 text-right">
-                                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                            <div className="flex justify-end gap-2 transition-all">
                                                 <button onClick={() => { setEventDataEdit({ ...event, date: event.date?.slice(0, 10), date_end: event.date_end?.slice(0, 10) || "" }); setModal(true); }} className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg"><Edit3 size={16} /></button>
-                                                <button onClick={() => handleRemove(event.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
+                                                <button onClick={() => handleRemove(event.id)} className="p-2 text-red-500  hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -186,41 +253,34 @@ function Eventadd() {
                 </div>
             </main>
 
+
             {/* DESCRIPTION VIEW MODAL */}
             {viewModal && selectedEvent && (
                 <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-[110] p-4">
-                    {/* Added max-h and overflow-y-auto here */}
-                    <div className="bg-white rounded-3xl w-full max-w-lg p-6 md:p-8 relative shadow-2xl animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
+                    <div className="bg-white rounded-3xl w-full max-w-lg p-6 md:p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
                         <button onClick={() => setViewModal(false)} className="sticky top-0 float-right text-gray-400 hover:text-black z-10 bg-white rounded-full p-1">
                             <X size={20} />
                         </button>
-
                         <div className="flex items-center gap-4 mb-6 mt-2">
-                            <img src={selectedEvent.image ? `${BASE_URLs}${selectedEvent.image}` : "/placeholder.png"} className="w-16 h-16 rounded-2xl object-cover border-4 border-rose-50" />
+                            <img src={selectedEvent.image ? `${BASE_URLs}${selectedEvent.image}` : "/placeholder.png"} className="w-16 h-16 rounded-2xl object-cover border-4 border-rose-50" alt="" />
                             <div>
                                 <h2 className="text-xl font-black text-gray-900">{selectedEvent.title}</h2>
-                                <p className="text-xs text-rose-500 font-bold uppercase tracking-widest">{selectedEvent.location}</p>
+                                <p className="text-xs text-rose-500 font-bold uppercase tracking-widest">{selectedEvent.location} • {selectedEvent.type}</p>
                             </div>
                         </div>
-
                         <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
                             <p className="text-xs font-bold text-gray-400 uppercase mb-2">Event Description</p>
-                            <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">
-                                {selectedEvent.description}
-                            </p>
+                            <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{selectedEvent.description}</p>
                         </div>
-
-                        <button onClick={() => setViewModal(false)} className="w-full mt-6 bg-gray-900 text-white py-3 rounded-xl font-bold">
-                            Close Preview
-                        </button>
+                        <button onClick={() => setViewModal(false)} className="w-full mt-6 bg-gray-900 text-white py-3 rounded-xl font-bold">Close Preview</button>
                     </div>
                 </div>
             )}
 
+
             {/* EDIT MODAL */}
             {modal && (
                 <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-[100] p-4">
-                    {/* Added max-h and overflow-y-auto here */}
                     <div className="bg-white rounded-3xl w-full max-w-lg p-6 md:p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
                         <button onClick={() => setModal(false)} className="sticky top-0 float-right text-gray-300 hover:text-black z-10 bg-white rounded-full p-1">
                             <X size={20} />
@@ -228,35 +288,63 @@ function Eventadd() {
 
                         <h2 className="text-xl font-black text-gray-900 mb-6 mt-2">Edit Event</h2>
 
-                        <form onSubmit={handleEdit} className="space-y-4">
+                        <form onSubmit={handleEditSubmit} className="space-y-4">
                             <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-gray-400 uppercase">Title & Dates</label>
-                                <input name="title" className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200 outline-rose-500" value={eventDataEdit.title} onChange={handleChangeEdit} />
+                                <input name="title" className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200 outline-rose-500 text-sm" value={eventDataEdit.title} onChange={handleChangeEdit} />
                                 <div className="grid grid-cols-2 gap-3 mt-2">
                                     <div className="space-y-1">
                                         <span className="text-[9px] text-gray-400 font-bold uppercase">Start Date</span>
-                                        <input name="date" type="date" className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200" value={eventDataEdit.date} onChange={handleChangeEdit} />
+                                        <input name="date" type="date" className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm" value={eventDataEdit.date} onChange={handleChangeEdit} />
                                     </div>
                                     <div className="space-y-1">
                                         <span className="text-[9px] text-gray-400 font-bold uppercase">End Date</span>
-                                        <input name="date_end" type="date" className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200" value={eventDataEdit.date_end} onChange={handleChangeEdit} />
+                                        <input name="date_end" type="date" className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm" value={eventDataEdit.date_end} onChange={handleChangeEdit} />
                                     </div>
                                 </div>
                             </div>
 
                             <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-gray-400 uppercase">Description</label>
-                                <textarea name="description" className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200 h-32 resize-none outline-rose-500" value={eventDataEdit.description} onChange={handleChangeEdit} />
+                                <textarea name="description" className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200 h-24 resize-none outline-rose-500 text-sm" value={eventDataEdit.description} onChange={handleChangeEdit} />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-bold text-gray-400 uppercase">Price (₹)</label>
-                                    <input name="price" type="number" className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200" value={eventDataEdit.price} onChange={handleChangeEdit} />
+                                    <input name="price" type="number" className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm" value={eventDataEdit.price} onChange={handleChangeEdit} />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-gray-400 uppercase">Location</label>
-                                    <input name="location" className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200" value={eventDataEdit.location} onChange={handleChangeEdit} />
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase">Capacity</label>
+                                    <input name="capacity" type="number" className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm" value={eventDataEdit.capacity} onChange={handleChangeEdit} />
+                                </div>
+                            </div>
+
+                            {/* Corrected type field bindings for edit modal */}
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase">Event Type</label>
+                                <input
+                                    name="type"
+                                    value={eventDataEdit.type}
+                                    placeholder="Event Type"
+                                    className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm"
+                                    onChange={handleChangeEdit}
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase">Location</label>
+                                <input name="location" className="w-full p-2.5 bg-gray-50 rounded-lg border border-gray-200 text-sm" value={eventDataEdit.location} onChange={handleChangeEdit} />
+                            </div>
+
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase">Change Event Image (Optional)</label>
+                                <div className="flex items-center gap-3 bg-gray-50 rounded-lg border border-gray-200 p-2.5">
+                                    {eventDataEdit.image && !(eventDataEdit.image instanceof File) && (
+                                        <img src={`${BASE_URLs}${eventDataEdit.image}`} className="w-8 h-8 object-cover rounded" alt="Current" />
+                                    )}
+                                    <input type="file" accept="image/*" className="text-xs file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-rose-50 file:text-rose-600 hover:file:bg-rose-100 cursor-pointer w-full text-gray-500" onChange={handleFileChangeEdit} />
                                 </div>
                             </div>
 

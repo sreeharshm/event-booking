@@ -111,8 +111,9 @@ function Home() {
 
                 <div className="flex items-center gap-6">
                     <button onClick={() => navigate('/home')} className="hidden lg:block text-sm font-bold text-rose-500 underline underline-offset-8 decoration-2">Home</button>
-                    <button onClick={() => navigate('/mybooking')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">Events</button>
+                    <button onClick={() => navigate('/event')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">Events</button>
                     <button onClick={() => navigate('/mybooking')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">My Booking</button>
+                    <button onClick={() => navigate('/myprofile')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">My Profile</button>
                     <button
                         onClick={handleLogout}
                         className="flex items-center gap-2 text-white text-xs font-bold bg-rose-500 hover:bg-rose-600 px-5 py-2.5 rounded-full transition-all shadow-md"

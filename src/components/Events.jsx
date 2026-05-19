@@ -52,17 +52,19 @@ function Events() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const fetchEvents = () => {
+    const fetchEvents = async () => {
         setLoading(true);
-        getAllEvent()
-            .then((res) => {
-                setEvents(res.data);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.error(err);
-                setLoading(false);
-            });
+
+        try{
+        const res = await getAllEvent()
+        setEvents(res.data)
+        }
+        catch (err){
+            console.error("event fetching failed", err); 
+        }
+        finally{
+            setLoading(false)
+        }
     };
 
     const handleFavEvent = (eventId) => {
@@ -140,9 +142,10 @@ function Events() {
 
                 <div className="flex items-center gap-6">
                     <button onClick={() => navigate('/home')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">Home</button>
-                    <button className="hidden lg:block text-sm font-bold text-rose-500 underline underline-offset-8 decoration-2">Eventsh </button>
+                    <button className="hidden lg:block text-sm font-bold text-rose-500 underline underline-offset-8 decoration-2">Events </button>
                     <button onClick={() => navigate('/mybooking')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">My Booking</button>
-                    <button
+                    
+                    <button onClick={() => navigate('/myprofile')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">My profile</button><button
                         onClick={() => { localStorage.clear(); navigate('/login'); }}
                         className="flex items-center gap-2 text-white text-xs font-bold bg-rose-500 hover:bg-rose-600 px-5 py-2.5 rounded-full transition-all shadow-md"
                     >

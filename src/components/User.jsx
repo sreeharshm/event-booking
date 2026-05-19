@@ -12,19 +12,21 @@ function User() {
         fetchUsers();
     }, []);
 
-    const fetchUsers = () => {
-        setLoading(true);
-        getAllUser()
-            .then((res) => {
-                setUsers(res.data);
-                setLoading(false);
-                console.log(users);
-            })
-            .catch((err) => {
-                console.error("Error fetching users:", err);
-                setLoading(false);
-            });
-    };
+
+    const fetchUsers = async () => {
+        try{
+            setLoading(true)
+
+            const res = await getAllUser()
+            setUsers(res.data)
+        }
+        catch (err){
+            console.error("error fetching users", err);      
+        }
+        finally{
+            setLoading(false)
+        }
+    }
 
     return (
         <div className="min-h-screen bg-[#f8f9fa] flex">
@@ -84,6 +86,7 @@ function User() {
                             Total Users: {users.length}
                         </div>
                     </div>
+
 
                     {/* Table Container - Matching Eventadd Table Style */}
                     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">

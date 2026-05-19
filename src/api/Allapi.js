@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const BASE_URLs = "https://event-booking-backend-production-63dd.up.railway.app"; // no trailing slash
+export const BASE_URLs = "http://127.0.0.1:8000"; 
 
 
 const authHeader = () => {
@@ -11,8 +11,10 @@ const authHeader = () => {
 };
 
 
-export const getAllEvent = (data) => {
-    return axios.get(`${BASE_URLs}/eventview/`,data)
+export const getAllEvent = () => {
+    return axios.get(`${BASE_URLs}/eventview/`,{
+        headers: authHeader()
+    })
 }
 
 
@@ -42,6 +44,7 @@ export const removeEvent = (id) => {
     })
 }
 
+
 export const getFavEvent = () => {
     return axios.get(`${BASE_URLs}/fav/`, {
         headers: authHeader()
@@ -61,9 +64,7 @@ export const addFavEvent = (data, id) => {
 
 export const removeFavEvent = (data, token) => {
     return axios.delete(`${BASE_URLs}/fav/`,data, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
+        headers: authHeader()
     })
 }
 
@@ -106,8 +107,26 @@ export const custLogin = async (data) => {
 
 
 export const getAllUser = () => {
-    return axios.get(`${BASE_URLs}/alluser/`,{
-        headers: authHeader(),
+    const token = localStorage.getItem("access");
+
+    return axios.get(`${BASE_URLs}/alluser/`, {
+        headers: authHeader()
+    });
+};
+
+
+export const curretUser = () => {
+    return axios.get(`${BASE_URLs}/current-user/`, {
+        headers: authHeader()
+    })
+}
+
+
+export const userEdit = (id, data) => {
+    const token = localStorage.getItem('access');
+
+    return axios.put(`${BASE_URLs}/useredit/${id}/`, data, {
+        headers: authHeader()
     })
 }
 
@@ -116,9 +135,11 @@ export const sendOTP = (data) => {
   return axios.post(`${BASE_URLs}/password-reset/send-otp/`, data);
 };
 
+
 export const verifyOTP = (data) => {
   return axios.post(`${BASE_URLs}/password-reset/confirm/`, data);
 };
+
 
 export const resetPassword = (data) => {
   return axios.post(`${BASE_URLs}/password-reset/reset/`, data);

@@ -14,6 +14,10 @@ import GetOTP from './components/GetOTP'
 import ResetPassword from './components/ResetPassword'
 import Mybooking from './components/Mybooking'
 
+import Sample from './components/Sample'
+import MyProfile from './components/MyProfile'
+
+
 function App() {
   return (
     <div>
@@ -31,10 +35,13 @@ function App() {
           <Route path="/booking" element={<h1 className="pt-20 text-center">Select an event first</h1>} />
           <Route path="/booking/:id" element={<Booking />} />
           <Route path="/mybooking" element={<Mybooking />} />
+          <Route path='/myprofile' element={<MyProfile/>}/>
 
           <Route path="/allbooking" element={<Allbooking />} />
           <Route path="/otp" element={<GetOTP />} />
           <Route path="/reset" element={<ResetPassword />} />
+
+          <Route path="/sample" element={<Sample/>}/>
         </Routes>
       </Router>
     </div>
