@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { curretUser, userEdit } from '../api/Allapi'; 
-import { User, Mail, ShieldCheck, Edit3, Loader2, LogOut, ArrowLeft, Camera, Phone } from 'lucide-react';
+import { curretUser, userEdit } from '../api/Allapi';
+import { User, Mail, ShieldCheck, Edit3, Loader2, LogOut, ArrowLeft, Camera, Phone, TextAlignJustify, X , Search} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 function MyProfile() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [sideBar, setSideBar] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false); // New state for button feedback
     const navigate = useNavigate();
 
@@ -28,7 +29,7 @@ function MyProfile() {
 
     const handleEdit = async () => {
         if (!user?.id) return;
-        
+
         setIsUpdating(true);
         try {
             const payload = {
@@ -54,19 +55,30 @@ function MyProfile() {
         </div>
     );
 
+
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate('/login');
+    };
+
+
     return (
         <div className="min-h-screen bg-gray-50">
             {/* --- NAVBAR --- */}
             <nav className="fixed bg-white/80 backdrop-blur-md top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-6 md:px-12 shadow-sm border-b border-gray-100">
+                <TextAlignJustify
+                    onClick={() => setSideBar(true)}
+                    className='lg:hidden md:hidden '
+                />
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
                     <p className="text-rose-500 text-2xl font-black tracking-tighter font-mono">
                         EVENT <span className="text-gray-800">HUB</span>
                     </p>
                 </div>
                 <div className="flex items-center gap-6">
-                    <button onClick={() => navigate('/home')} className="text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">Home</button>
-                    <button onClick={() => navigate('/event')} className="text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">Events</button>
-                    <button onClick={() => navigate('/mybooking')} className="text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">My Booking</button>
+                    <button onClick={() => navigate('/home')} className="hidden lg-block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">Home</button>
+                    <button onClick={() => navigate('/event')} className="hidden lg-block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">Events</button>
+                    <button onClick={() => navigate('/mybooking')} className="hidden lg-block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">My Booking</button>
                     <button className="hidden lg:block text-sm font-bold text-rose-500 underline underline-offset-8 decoration-2">My profile </button>
                     <button
                         onClick={() => { localStorage.clear(); navigate('/login'); }}
@@ -76,6 +88,48 @@ function MyProfile() {
                     </button>
                 </div>
             </nav>
+
+
+            {sideBar && (
+                <div
+                    className='fixed inset-0 bg-black/20 z-50 backdrop-blur-sm '
+                    onClick={() => setSideBar(false)}
+                >
+                    <div
+                        className='fixed left-0 top-0 h-screen bg-white w-48 p-6 shadow-2xl flex flex-col justify-between animate-in slide-in-from-left duration-500 ease-out'
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+                                <p className="text-rose-500 text-xl font-black tracking-tighter font-mono">
+                                    EVENT <span className="text-gray-800">HUB</span>
+                                </p>
+                                <X
+                                    size={20}
+                                    className="text-gray-400 cursor-pointer hover:text-rose-500"
+                                    onClick={() => setSideBar(false)}
+                                />
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                                <button onClick={() => { navigate('/home'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">Home</button>
+                                <button onClick={() => { navigate('/event'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">Events</button>
+                                <button onClick={() => { navigate('/mybooking'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">My Booking</button>
+                                <button onClick={() => { navigate('/myprofile'); setSideBar(false); }} className="text-left text-sm font-bold text-rose-500 bg-rose-50/50 px-4 py-2.5 rounded-xl">My profile</button>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleLogout}
+                            className="hidden md:flex flex items-center justify-center gap-2 text-white text-sm font-bold bg-rose-500 hover:bg-rose-600 w-full py-3 rounded-xl transition-all shadow-md mt-auto"
+                        >
+                            <LogOut size={16} /> Logout
+                        </button>
+
+                    </div>
+                </div>
+            )}
+
 
             <div className="pt-28 pb-12 px-6">
                 <div className="max-w-2xl mx-auto">
@@ -120,9 +174,8 @@ function MyProfile() {
                                     </p>
                                 </div>
                                 <button
-                                    className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all shadow-sm ${
-                                        isUpdating ? 'bg-gray-100 text-gray-400' : 'bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white border-2 border-rose-100'
-                                    }`}
+                                    className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all shadow-sm ${isUpdating ? 'bg-gray-100 text-gray-400' : 'bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white border-2 border-rose-100'
+                                        }`}
                                     onClick={handleEdit}
                                     disabled={isUpdating}
                                 >

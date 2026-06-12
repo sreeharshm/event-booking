@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Users, Calendar, Ticket, LogOut, Menu, X, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { Users, Calendar, Ticket, LogOut, Menu, X, ShieldAlert, ShieldCheck, TextAlignJustify } from 'lucide-react';
 import { getAllUser, BASE_URLs } from '../api/Allapi';
+import { useNavigate } from 'react-router-dom';
 
 function User() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const [sideBar, setSideBar] = useState(false);
+
+    const nanigate = useNavigate();
 
     useEffect(() => {
         fetchUsers();
@@ -14,29 +19,31 @@ function User() {
 
 
     const fetchUsers = async () => {
-        try{
+        try {
             setLoading(true)
 
             const res = await getAllUser()
             setUsers(res.data)
         }
-        catch (err){
-            console.error("error fetching users", err);      
+        catch (err) {
+            console.error("error fetching users", err);
         }
-        finally{
+        finally {
             setLoading(false)
         }
     }
+
 
     return (
         <div className="min-h-screen bg-[#f8f9fa] flex">
             {/* Sidebar Overlay for Mobile */}
             {isSidebarOpen && (
-                <div 
+                <div
                     className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[45] md:hidden"
                     onClick={() => setIsSidebarOpen(false)}
                 />
             )}
+
 
             {/* Sidebar - Matching Eventadd style */}
             <aside className={`fixed top-16 left-0 h-full bg-white border-r border-gray-200 p-6 z-40 transition-transform duration-300 w-64 
@@ -64,7 +71,12 @@ function User() {
                         EVENT<span className="text-rose-500">ADMIN</span>
                     </p>
                 </div>
-                
+                <TextAlignJustify
+                size={18}
+                className='md:hidden'
+                onClick={() => setSideBar(true)}
+                />
+
                 <div className="flex items-center gap-4">
                     <span className="hidden sm:block text-xs font-bold bg-gray-100 text-gray-500 px-3 py-1 rounded-full uppercase tracking-wider">
                         Super Admin
@@ -76,6 +88,46 @@ function User() {
                     </button>
                 </div>
             </nav>
+
+            {sideBar && (
+                <div
+                    className='fixed inset-0 bg-black/20 z-50 backdrop-blur-sm'
+                    onClick={() => setSideBar(false)}
+                >
+                    <div
+                        className='fixed left-0 top-0 h-screen bg-white w-48 p-6 shadow-2xl flex flex-col justify-between animate-in slide-in-from-left duration-300 ease-out transform translate-x-0'
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+                                <p className="text-rose-500 text-xl font-black tracking-tighter font-mono">
+                                    EVENT <span className="text-gray-800">HUB</span>
+                                </p>
+                                <X
+                                    size={20}
+                                    className="text-gray-400 cursor-pointer hover:text-rose-500"
+                                    onClick={() => setSideBar(false)}
+                                />
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                                {/* FIXED: Fixed route path string syntax typo from 'homet' to '/home' */}
+                                <button className="text-left text-sm font-bold text-rose-500 bg-rose-50/50 px-4 py-2.5 rounded-xl">Home</button>
+                                <button onClick={() => { navigate('/event'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">Events</button>
+                                <button onClick={() => { navigate('/mybooking'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">My Booking</button>
+                                <button onClick={() => { navigate('/myprofile'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">My Profile</button>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center justify-center gap-2 text-white text-sm font-bold bg-rose-500 hover:bg-rose-600 w-full py-3 rounded-xl transition-all shadow-md mt-auto"
+                        >
+                            <LogOut size={16} /> Logout
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Main Content - Matching Eventadd layout */}
             <main className="flex-1 md:ml-64 pt-24 px-4 md:px-8 pb-12">

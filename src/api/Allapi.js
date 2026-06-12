@@ -46,7 +46,7 @@ export const removeEvent = (id) => {
 
 
 export const getFavEvent = () => {
-    return axios.get(`${BASE_URLs}/fav/`, {
+    return axios.get(`${BASE_URLs}/allfav/`, {
         headers: authHeader()
     })
 }
@@ -62,8 +62,8 @@ export const addFavEvent = (data, id) => {
 }
 
 
-export const removeFavEvent = (data, token) => {
-    return axios.delete(`${BASE_URLs}/fav/`,data, {
+export const removeFavEvent = (id) => {
+    return axios.delete(`${BASE_URLs}/removefav/${id}/`, {
         headers: authHeader()
     })
 }

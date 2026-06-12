@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { addEvent, BASE_URLs, editEvent, getAllEvent, removeEvent } from "../api/Allapi";
-import { Plus, Trash2, Edit3, MapPin, Calendar, Users, X, Eye, ExternalLink, Ticket, LogOut, Upload } from "lucide-react";
+import { Plus, Trash2, Edit3, MapPin, Calendar, Users, X, Eye, ExternalLink, Ticket, LogOut, Upload, TextAlignJustify } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function Eventadd() {
     const [eventData, setEventData] = useState({
@@ -16,6 +17,11 @@ function Eventadd() {
     const [viewModal, setViewModal] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [showAddForm, setShowAddForm] = useState(false);
+
+    const [sideBar, setSideBar] = useState(false);
+
+    const navigate = useNavigate()
+
 
     useEffect(() => {
         fetchEvent();
@@ -128,6 +134,11 @@ function Eventadd() {
         }
     };
 
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate('/login');
+    };
+
     return (
         <div className="min-h-screen bg-[#f8f9fa] flex">
             {/* Sidebar */}
@@ -147,6 +158,11 @@ function Eventadd() {
 
             {/* Navbar */}
             <nav className="fixed top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-8 bg-white border-b border-gray-200">
+                <TextAlignJustify
+                    size={18}
+                    className="md:hidden cursor-pointer"
+                    onClick={() => setSideBar(true)}
+                />
                 <p className="text-xl font-black tracking-tight text-gray-800">
                     EVENT<span className="text-rose-500">ADMIN</span>
                 </p>
@@ -161,6 +177,47 @@ function Eventadd() {
                     </button>
                 </div>
             </nav>
+
+            {sideBar && (
+                <div
+                    className='fixed inset-0 bg-black/20 z-50 backdrop-blur-sm'
+                    onClick={() => setSideBar(false)}
+                >
+                    <div
+                        className='fixed left-0 top-0 h-screen bg-white w-48 p-6 shadow-2xl flex flex-col justify-between animate-in slide-in-from-left duration-300 ease-out transform translate-x-0'
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+                                <p className="text-rose-500 text-xl font-black tracking-tighter font-mono">
+                                    EVENT <span className="text-gray-800">ADMIN</span>
+                                </p>
+                                <X
+                                    size={20}
+                                    className="text-gray-400 cursor-pointer hover:text-rose-500"
+                                    onClick={() => setSideBar(false)}
+                                />
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                                {/* FIXED: Fixed route path string syntax typo from 'homet' to '/home' */}
+                                
+                                <button onClick={() => { navigate('/user'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">Users</button>
+                                <button className="text-left text-sm font-bold text-rose-500 bg-rose-50/50 px-4 py-2.5 rounded-xl">Event add</button>
+                                <button onClick={() => { navigate('/allbooking'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">All Booking</button>
+                                <button onClick={() => { navigate('/myprofile'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">My Profile</button>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center justify-center gap-2 text-white text-sm font-bold bg-rose-500 hover:bg-rose-600 w-full py-3 rounded-xl transition-all shadow-md mt-auto"
+                        >
+                            <LogOut size={16} /> Logout
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <main className="flex-1 md:ml-64 pt-24 px-4 md:px-8 pb-12">
                 <div className="max-w-7xl mx-auto">
