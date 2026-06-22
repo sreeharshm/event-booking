@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addFavEvent, getAllEvent, removeFavEvent, BASE_URLs } from '../api/Allapi';
-import { Heart, LogOut, Search, X, Calendar, TextAlignJustify, } from 'lucide-react';
+import { addFavEvent, getAllEvent, BASE_URLs } from '../api/Allapi';
+import { Heart, LogOut, Search, X, Calendar, TextAlignJustify, Menu, User, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function Events() {
@@ -16,6 +16,8 @@ function Events() {
     const [activeIndex, setActiveIndex] = useState(-1);
     const searchRef = useRef(null);
     const navigate = useNavigate();
+
+    const [sideModal, setSideModal] = useState(false);
 
     // 1. Initial Data Fetch
     useEffect(() => {
@@ -59,11 +61,9 @@ function Events() {
         try {
             const res = await getAllEvent();
             setEvents(res.data);
-        }
-        catch (err) {
+        } catch (err) {
             console.error("event fetching failed", err);
-        }
-        finally {
+        } finally {
             setLoading(false);
         }
     };
@@ -84,16 +84,15 @@ function Events() {
         );
 
         try {
-            const res = await addFavEvent({}, eventId);
-
-
-            if (res && res.data) {
-
-            }
+            await addFavEvent({}, eventId);
         } catch (err) {
             console.error("Favorite sync failed", err);
             fetchEvents();
         }
+    };
+
+    const handleOpenModal = () => {
+        setSideModal(true);
     };
 
     const handleLogout = () => {
@@ -102,51 +101,53 @@ function Events() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20">
+        <div className="min-h-screen bg-[#f5f5fa] pb-20 text-[#222222]">
             {/* --- NAVBAR START --- */}
-            <nav className="fixed bg-white/80 backdrop-blur-md top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-12 shadow-sm border-b border-gray-100">
-                <TextAlignJustify
-                    onClick={() => setSideBar(true)}
-                    className='md:hidden cursor-pointer text-gray-700'
-                />
-                <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
-                    <p className="text-rose-500 text-xl md:text-2xl font-black tracking-tighter font-mono">
-                        EVENT <span className="text-gray-800">HUB</span>
-                    </p>
+            <nav className="fixed bg-[#333545] top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-12 shadow-md">
+                <div className="flex items-center gap-4">
+                    <TextAlignJustify
+                        onClick={() => setSideBar(true)}
+                        className='md:hidden cursor-pointer text-white'
+                    />
+                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
+                        <p className="text-white text-xl md:text-2xl font-black tracking-tight font-sans">
+                            book<span className="text-[#f84464]">my</span>show
+                        </p>
+                    </div>
                 </div>
 
                 {sidebar && (
                     <div
-                        className='fixed inset-0 bg-black/20 z-50 backdrop-blur-sm'
+                        className='fixed inset-0 bg-black/50 z-50 backdrop-blur-sm'
                         onClick={() => setSideBar(false)}
                     >
                         <div
-                            className='fixed left-0 top-0 h-screen bg-white w-48 p-6 shadow-2xl flex flex-col justify-between animate-in slide-in-from-left duration-500 ease-out transform translate-x-0'
+                            className='fixed left-0 top-0 h-screen bg-[#333545] w-56 p-6 shadow-2xl flex flex-col justify-between animate-in slide-in-from-left duration-300 ease-out transform translate-x-0'
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="space-y-6">
-                                <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-                                    <p className="text-rose-500 text-xl font-black tracking-tighter font-mono">
-                                        EVENT <span className="text-gray-800">HUB</span>
+                                <div className="flex items-center justify-between pb-4 border-b border-gray-700">
+                                    <p className="text-white text-xl font-black tracking-tight">
+                                        book<span className="text-[#f84464]">my</span>show
                                     </p>
                                     <X
                                         size={20}
-                                        className="text-gray-400 cursor-pointer hover:text-rose-500"
+                                        className="text-gray-400 cursor-pointer hover:text-[#f84464]"
                                         onClick={() => setSideBar(false)}
                                     />
                                 </div>
 
-                                <div className="flex flex-col gap-4">
-                                    <button onClick={() => { navigate('/home'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">Home</button>
-                                    <button onClick={() => { navigate('/event'); setSideBar(false); }} className="text-left text-sm font-bold text-rose-500 bg-rose-50/50 px-4 py-2.5 rounded-xl">Events</button>
-                                    <button onClick={() => { navigate('/mybooking'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">My Booking</button>
-                                    <button onClick={() => { navigate('/myprofile'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">My Profile</button>
+                                <div className="flex flex-col gap-2">
+                                    <button onClick={() => { navigate('/home'); setSideBar(false); }} className="text-left text-sm font-medium text-gray-200 hover:text-white hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all">Home</button>
+                                    <button onClick={() => { navigate('/event'); setSideBar(false); }} className="text-left text-sm font-bold text-white bg-[#f84464] px-4 py-2.5 rounded-lg">Events</button>
+                                    <button onClick={() => { navigate('/mybooking'); setSideBar(false); }} className="text-left text-sm font-medium text-gray-200 hover:text-white hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all">My Booking</button>
+                                    <button onClick={() => { navigate('/myprofile'); setSideBar(false); }} className="text-left text-sm font-medium text-gray-200 hover:text-white hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all">My Profile</button>
                                 </div>
                             </div>
 
                             <button
                                 onClick={handleLogout}
-                                className="flex items-center justify-center gap-2 text-white text-sm font-bold bg-rose-500 hover:bg-rose-600 w-full py-3 rounded-xl transition-all shadow-md mt-auto"
+                                className="flex items-center justify-center gap-2 text-white text-sm font-bold bg-[#f84464] hover:bg-[#f84464]/90 w-full py-3 rounded-lg transition-all shadow-md mt-auto"
                             >
                                 <LogOut size={16} /> Logout
                             </button>
@@ -154,52 +155,27 @@ function Events() {
                     </div>
                 )}
 
-                {/* Mobile Search Bar Wrapper */}
-                <div
-                    className="md:hidden relative flex items-center h-9 flex-1 max-w-[160px] xs:max-w-[200px] bg-gray-100 rounded-lg px-2 border border-transparent focus-within:border-rose-300 focus-within:bg-white transition-all shadow-inner"
-                    ref={searchRef}
-                >
-                    <Search size={16} className="text-gray-400 mr-1.5" />
+                {/* Search Bar Wrapper */}
+                <div className="relative flex items-center h-10 flex-1 max-w-[200px] sm:max-w-xs md:max-w-md bg-white rounded-md px-3 border border-gray-200 shadow-inner" ref={searchRef}>
+                    <Search size={16} className="text-gray-400 mr-2 flex-shrink-0" />
                     <input
                         type="text"
-                        placeholder="Search..."
-                        className="bg-transparent border-none focus:ring-0 text-xs w-full outline-none p-0"
+                        placeholder="Search for Movies, Events, Plays and Activities..."
+                        className="bg-transparent border-none focus:ring-0 text-xs md:text-sm w-full outline-none p-0 text-gray-700 placeholder-gray-400"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onFocus={() => searchQuery && setIsDropdownOpen(true)}
                     />
                     {searchQuery && (
                         <X
-                            size={14}
+                            size={16}
                             onClick={() => { setSearchQuery(""); setIsDropdownOpen(false); }}
-                            className="text-gray-400 cursor-pointer hover:text-rose-500"
+                            className="text-gray-400 cursor-pointer hover:text-[#f84464]"
                         />
                     )}
-                </div>
-
-                {/* Desktop Search Bar */}
-                <div className="hidden md:block relative w-1/3" ref={searchRef}>
-                    <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 border border-transparent focus-within:border-rose-300 focus-within:bg-white transition-all shadow-inner">
-                        <Search size={18} className="text-gray-400 mr-2" />
-                        <input
-                            type="text"
-                            placeholder="Search for events..."
-                            className="bg-transparent border-none focus:ring-0 text-sm w-full outline-none"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onFocus={() => searchQuery && setIsDropdownOpen(true)}
-                        />
-                        {searchQuery && (
-                            <X
-                                size={16}
-                                onClick={() => { setSearchQuery(""); setIsDropdownOpen(false); }}
-                                className="text-gray-400 cursor-pointer hover:text-rose-500"
-                            />
-                        )}
-                    </div>
 
                     {isDropdownOpen && filteredResults.length > 0 && (
-                        <div className="absolute top-11 left-0 w-full bg-white border border-gray-200 rounded-b-xl shadow-2xl z-[60] overflow-hidden">
+                        <div className="absolute top-11 left-0 w-full bg-white border border-gray-200 rounded-b-lg shadow-2xl z-[60] overflow-hidden">
                             {filteredResults.map((item, index) => (
                                 <div
                                     key={item.id}
@@ -208,16 +184,20 @@ function Events() {
                                         setIsDropdownOpen(false);
                                         navigate(`/booking/${item.id}`);
                                     }}
-                                    className={`px-4 py-3 cursor-pointer border-b border-gray-50 flex items-center gap-3 transition-colors ${index === activeIndex ? "bg-rose-100" : "hover:bg-rose-50"}`}
+                                    className={`px-4 py-3 cursor-pointer border-b border-gray-100 flex items-center gap-3 transition-colors ${index === activeIndex ? "bg-gray-100" : "hover:bg-gray-50"}`}
                                 >
                                     <img
-                                        src={item.image ? `${BASE_URLs}${item.image}` : "https://via.placeholder.com/40"}
+                                        src={
+                                            item.image
+                                                ? (item.image.startsWith('http') ? item.image : `${BASE_URLs}${item.image}`)
+                                                : "https://via.placeholder.com/40"
+                                        }
                                         alt=""
                                         className="w-8 h-8 rounded object-cover"
                                     />
                                     <div>
-                                        <p className="text-sm font-bold text-gray-700 truncate">{item.title}</p>
-                                        <p className="text-[10px] text-gray-400 uppercase">{item.location}</p>
+                                        <p className="text-sm font-bold text-gray-800 truncate">{item.title}</p>
+                                        <p className="text-[10px] text-gray-500 uppercase">{item.location}</p>
                                     </div>
                                 </div>
                             ))}
@@ -225,128 +205,157 @@ function Events() {
                     )}
                 </div>
 
-
                 <div className="hidden md:flex items-center gap-6">
-                    <button onClick={() => navigate('/home')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">Home</button>
-                    <button className="hidden lg:block text-sm font-bold text-rose-500 underline underline-offset-8 decoration-2">Events </button>
-                    <button onClick={() => navigate('/mybooking')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">My Booking</button>
-                    <button onClick={() => navigate('/myprofile')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">My profile</button>
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 text-white text-xs font-bold bg-rose-500 hover:bg-rose-600 px-5 py-2.5 rounded-full transition-all shadow-md"
-                    >
-                        <LogOut size={14} /> Logout
-                    </button>
+                    <button onClick={() => navigate('/home')} className="text-xs font-medium text-gray-300 hover:text-white transition-colors">Home</button>
+                    <button className="text-sm font-bold text-white border-b-2 border-[#f84464] pb-1">Events</button>
+                    <button className="text-xs font-medium text-gray-300 hover:text-white transition-colors">About</button>
+
+                    <Menu
+                        size={20}
+                        className='cursor-pointer text-gray-300 hover:text-white transition-colors'
+                        onClick={handleOpenModal}
+                    />
                 </div>
             </nav>
-            {/* --- NAVBAR END --- */}
+
+            {sideModal && (
+                <div
+                    className='inset-0 fixed bg-black/40 z-50 backdrop-blur-xs animate-in fade-in duration-200'
+                    onClick={() => setSideModal(false)}
+                >
+                    <div
+                        className='fixed bg-white w-64 h-full shadow-2xl top-0 right-0 p-6 flex flex-col justify-between animate-in slide-in-from-right duration-300 ease-out text-[#222222]'
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className='flex flex-col gap-6'>
+                            <div className='flex items-center justify-between pb-4 border-b border-gray-100'>
+                                <h3 className='font-bold text-lg text-gray-800'>Account</h3>
+                                <X
+                                    size={20}
+                                    className='text-gray-400 cursor-pointer hover:text-[#f84464] transition-colors'
+                                    onClick={() => setSideModal(false)}
+                                />
+                            </div>
+
+                            <div className='flex flex-col gap-1'>
+                                <button onClick={() => { navigate('/myprofile'); setSideModal(false); }} className='flex items-center gap-3 px-4 py-3 text-sm font-semibold text-gray-600 hover:text-[#f84464] hover:bg-gray-50 rounded-lg transition-all text-left'>
+                                    <User size={16} /> Profile
+                                </button>
+                                <button onClick={() => { navigate('/fav'); setSideModal(false); }} className='flex items-center gap-3 px-4 py-3 text-sm font-semibold text-gray-600 hover:text-[#f84464] hover:bg-gray-50 rounded-lg transition-all text-left'>
+                                    <Heart size={16} /> Favorite Events
+                                </button>
+                                <button onClick={() => { navigate('/mybooking'); setSideModal(false); }} className='flex items-center gap-3 px-4 py-3 text-sm font-semibold text-gray-600 hover:text-[#f84464] hover:bg-gray-50 rounded-lg transition-all text-left'>
+                                    <BookOpen size={16} /> My Booking
+                                </button>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleLogout}
+                            className='flex items-center justify-center gap-2 text-white text-sm font-bold bg-[#f84464] hover:bg-[#f84464]/90 w-full py-3 rounded-lg transition-all shadow-md'
+                        >
+                            <LogOut size={16} /> Logout
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Header Section */}
-            <div className="pt-24 md:pt-28 px-4 md:px-12 max-w-7xl mx-auto mb-6 md:mb-10">
-                <h1 className="text-2xl md:text-4xl font-black text-gray-900 mb-1">
-                    Discover <span className="text-rose-500">Experiences</span>
+            <div className="pt-24 md:pt-28 px-4 md:px-12 max-w-7xl mx-auto mb-6 md:mb-8">
+                <h1 className="text-2xl md:text-3xl font-bold text-[#222222] mb-1">
+                    Events In Your Location
                 </h1>
-                <p className="text-xs md:text-sm text-gray-500 font-medium">Book tickets for the most exciting events.</p>
+                <p className="text-xs md:text-sm text-gray-500">Discover live experiences, masterclasses, and music shows around you.</p>
             </div>
 
             {/* Content Grid */}
             <div className="px-4 md:px-12 max-w-7xl mx-auto">
                 {loading ? (
                     <div className="flex justify-center items-center py-20">
-                        <div className="w-10 h-10 border-4 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-10 h-10 border-4 border-[#f84464] border-t-transparent rounded-full animate-spin"></div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                         {events
                             .filter(ev => ev.title?.toLowerCase().includes(searchQuery.toLowerCase()))
                             .map((event) => (
                                 <div
                                     key={event.id}
                                     onClick={() => navigate(`/booking/${event.id}`)}
-                                    className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between"
+                                    className="group bg-transparent overflow-hidden transition-all duration-300 cursor-pointer flex flex-col justify-between"
                                 >
-                                    <div className="relative h-36 sm:h-44 md:h-52 overflow-hidden w-full">
+                                    <div className="relative aspect-[2/3] md:aspect-[3/4] rounded-xl overflow-hidden w-full bg-gray-200 shadow-sm border border-gray-100">
                                         <img
-                                            src={event.image ? `${BASE_URLs}${event.image}` : "https://via.placeholder.com/400x300"}
+                                            src={
+                                                event.image
+                                                    ? (event.image.startsWith('http') ? event.image : `${BASE_URLs}${event.image}`)
+                                                    : "https://via.placeholder.com/400x600"
+                                            }
                                             alt={event.title}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                            className="w-full h-full object-cover transition-transform duration-300"
                                         />
 
-                                        {/* CHANGED: Wrapped button in motion.button for satisfying tactile feedback & pop effect */}
                                         <motion.button
-                                            whileHover={{ scale: 1.15 }}
-                                            whileTap={{ scale: 0.85 }}
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.9 }}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleFavEvent(event.id);
                                             }}
-                                            className="absolute top-2 right-2 md:top-4 md:right-4 p-1.5 md:p-2.5 bg-white/90 rounded-full transition-colors shadow-sm z-10"
+                                            className="absolute top-2 right-2 p-2 bg-black/40 backdrop-blur-md rounded-full transition-colors shadow-sm z-10"
                                         >
-                                            {/* Nested AnimatePresence lets the inner filled heart expand beautifully when activated */}
                                             <AnimatePresence mode="wait">
                                                 <motion.div
                                                     key={event.is_favorite ? "fav" : "unfav"}
                                                     initial={{ scale: 0 }}
-                                                    animate={{
-                                                        scale: [0, 1.4, 1],
-                                                        rotate: [0, -10, 10, 0]
-                                                    }}
-                                                    transition={{
-                                                        duration: 0.4,
-                                                        ease: "easeOut"
-                                                    }}
+                                                    animate={{ scale: [0, 1.2, 1] }}
+                                                    transition={{ duration: 0.2 }}
                                                 >
                                                     <Heart
                                                         size={16}
-                                                        className={`md:w-5 md:h-5 transition-colors ${event.is_favorite ? "text-rose-500 fill-rose-500" : "text-gray-400"
-                                                            }`}
+                                                        className={`transition-colors ${event.is_favorite ? "text-[#f84464] fill-[#f84464]" : "text-white"}`}
                                                     />
                                                 </motion.div>
                                             </AnimatePresence>
                                         </motion.button>
 
-                                        <div className="absolute bottom-2 left-2 md:bottom-4 md:left-4 bg-rose-500 text-white px-2 py-0.5 md:px-3 md:py-1 rounded-md md:rounded-lg text-xs md:text-sm font-black shadow-lg">
-                                            ₹{event.price}
+                                        {/* Bottom Overlay Info Banner */}
+                                        <div className="absolute bottom-0 left-0 w-full bg-black/70 backdrop-blur-xs text-white px-3 py-1.5 text-xs md:text-sm font-medium flex justify-between items-center">
+                                            <span>₹{event.price} onwards</span>
+                                            <span className={`text-[10px] md:text-xs font-bold ${event.capacity <= 5 ? "text-orange-400" : "text-emerald-400"}`}>
+                                                {event.capacity === 0 ? "Sold Out" : `${event.capacity} seats left`}
+                                            </span>
                                         </div>
                                     </div>
 
-                                    <div className="p-3 md:p-6 flex-1 flex flex-col justify-between gap-2 md:gap-4">
+                                    {/* Text Info Section styled exactly like BookMyShow's minimal card titles */}
+                                    <div className="pt-3 pb-2 px-1 flex-1 flex flex-col justify-between gap-1">
                                         <div>
-                                            <h3 className="text-sm md:text-lg font-black text-gray-800 line-clamp-1 group-hover:text-rose-500 transition-colors">
+                                            <h3 className="text-sm md:text-base font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-[#f84464] transition-colors">
                                                 {event.title}
                                             </h3>
 
-                                            <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wide mt-0.5 md:mt-1 truncate">
+                                            <p className="text-xs text-gray-500 font-medium mt-1 truncate">
                                                 {event.location}
                                             </p>
                                         </div>
 
-                                        <div className="flex items-center gap-1.5 text-gray-500 text-xs md:text-sm">
-                                            <Calendar size={12} className="text-rose-500 md:w-3.5 md:h-3.5" />
+                                        <div className="flex items-center gap-1.5 text-gray-400 text-xs pt-1">
+                                            <Calendar size={13} className="text-gray-400" />
                                             <span className="truncate">{new Date(event.date).toDateString()}</span>
                                         </div>
 
-                                        <div className="flex items-center justify-between mt-auto pt-1">
-                                            <span className={`text-xs md:text-sm font-bold ${event.capacity <= 5 ? "text-red-500" : "text-green-600"}`}>
-                                                {event.capacity} Left
-                                            </span>
-
-                                            {event.capacity === 0 && (
-                                                <span className="text-[9px] md:text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-bold">
-                                                    SOLD OUT
-                                                </span>
-                                            )}
+                                        <div className="pt-2">
+                                            <button
+                                                disabled={event.capacity === 0}
+                                                className={`w-full py-2 rounded-lg text-xs md:text-sm font-bold transition-all ${event.capacity === 0
+                                                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                    : "bg-[#f84464] text-white hover:bg-[#f84464]/90"
+                                                    }`}
+                                            >
+                                                {event.capacity === 0 ? "Sold Out" : "Book Tickets"}
+                                            </button>
                                         </div>
-
-                                        <button
-                                            disabled={event.capacity === 0}
-                                            className={`w-full py-2 md:py-3 rounded-xl text-xs md:text-sm font-bold transition-all active:scale-95 ${event.capacity === 0
-                                                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                                : "bg-gray-900 text-white hover:bg-rose-500"
-                                                }`}
-                                        >
-                                            {event.capacity === 0 ? "Sold Out" : "Book Now"}
-                                        </button>
                                     </div>
                                 </div>
                             ))}
@@ -355,7 +364,7 @@ function Events() {
 
                 {!loading && events.filter(ev => ev.title?.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
                     <div className="text-center py-20">
-                        <p className="text-gray-400 italic">No events match your search.</p>
+                        <p className="text-gray-400 italic">No live events matching your choice right now.</p>
                     </div>
                 )}
             </div>

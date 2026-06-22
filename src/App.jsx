@@ -16,6 +16,7 @@ import Mybooking from './components/Mybooking'
 
 import Sample from './components/Sample'
 import MyProfile from './components/MyProfile'
+import FavEvent from './components/FavEvent'
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
           <Route path="/booking/:id" element={<Booking />} />
           <Route path="/mybooking" element={<Mybooking />} />
           <Route path='/myprofile' element={<MyProfile/>}/>
+          <Route path='/fav' element={<FavEvent/>}/>
 
           <Route path="/allbooking" element={<Allbooking />} />
           <Route path="/otp" element={<GetOTP />} />

@@ -1,19 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { getAllBoking, BASE_URLs, downloadTicket } from '../api/Allapi';
-import { Loader2, Calendar, MapPin, Ticket, Search, X, LogOut, Download, TextAlignJustify, } from 'lucide-react';
+import { getAllBoking, BASE_URLs, downloadTicket, curretUser } from '../api/Allapi';
+import { Loader2, Calendar, MapPin, Ticket, Search, X, LogOut, Download, ArrowLeft, BookOpen, ShieldCheck, User, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 function Mybooking() {
     const [bookings, setBookings] = useState([]);
+    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    const [sideBar, setSideBar] = useState(false)
-
-    // --- Search States ---
     const [searchQuery, setSearchQuery] = useState("");
-    const [filteredResults, setFilteredResults] = useState([]);
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const searchRef = useRef(null);
+    
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,30 +18,19 @@ function Mybooking() {
             return;
         }
 
-        getAllBoking()
-            .then(res => {
-                setBookings(res.data);
+        // Fetch both user information and bookings data
+        Promise.all([curretUser(), getAllBoking()])
+            .then(([userRes, bookingRes]) => {
+                const userData = Array.isArray(userRes.data) ? userRes.data[0] : userRes.data;
+                setUser(userData);
+                setBookings(bookingRes.data);
                 setLoading(false);
             })
             .catch(err => {
-                console.error(err);
+                console.error("Data fetching failed:", err);
                 setLoading(false);
             });
     }, [navigate]);
-
-    // Handle Search Dropdown logic
-    useEffect(() => {
-        if (searchQuery.trim() === "") {
-            setFilteredResults([]);
-            setIsDropdownOpen(false);
-        } else {
-            const results = bookings
-                .filter(b => b.event?.title.toLowerCase().includes(searchQuery.toLowerCase()))
-                .slice(0, 5);
-            setFilteredResults(results);
-            setIsDropdownOpen(true);
-        }
-    }, [searchQuery, bookings]);
 
     const handleDownload = async (id) => {
         try {
@@ -65,236 +49,204 @@ function Mybooking() {
         }
     };
 
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate('/login');
+    };
+
+    // Filter logic for booking tickets based on search query
+    const filteredBookings = bookings.filter(b => 
+        b.event?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        b.event?.location?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     if (loading) return (
         <div className="h-screen flex justify-center items-center bg-gray-50">
             <Loader2 className="animate-spin text-rose-500" size={40} />
         </div>
     );
 
-    const handleLogout = () => {
-        localStorage.clear();
-        navigate('/login');
-    };
-
     return (
-        <div className="min-h-screen bg-gray-50">
-            {/* --- NAVBAR START --- */}
-            <nav className="fixed bg-white/80 backdrop-blur-md top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-12 shadow-sm border-b border-gray-100">
-                <TextAlignJustify
-                    onClick={() => setSideBar(true)}
-                    className='md:hidden cursor-pointer text-gray-700'
-                />
-                <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
-                    <p className="text-rose-500 text-xl md:text-2xl font-black tracking-tighter font-mono">
-                        EVENT <span className="text-gray-800">HUB</span>
-                    </p>
-                </div>
-
-                {sideBar && (
-                    <div
-                        className='fixed inset-0 bg-black/20 z-50 backdrop-blur-sm'
-                        onClick={() => setSideBar(false)}
-                    >
-                        <div
-                            className='fixed left-0 top-0 h-screen bg-white w-48 p-6 shadow-2xl flex flex-col justify-between animate-in slide-in-from-left duration-500 ease-out transform translate-x-0'
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <div className="space-y-6">
-                                <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-                                    <p className="text-rose-500 text-xl font-black tracking-tighter font-mono">
-                                        EVENT <span className="text-gray-800">HUB</span>
-                                    </p>
-                                    <X
-                                        size={20}
-                                        className="text-gray-400 cursor-pointer hover:text-rose-500"
-                                        onClick={() => setSideBar(false)}
-                                    />
-                                </div>
-
-                                <div className="flex flex-col gap-4">
-                                    <button onClick={() => { navigate('/home'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">Home</button>
-                                    <button onClick={() => { navigate('/event'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">Events</button>
-                                    <button className="text-left text-sm font-bold text-rose-500 bg-rose-50/50 px-4 py-2.5 rounded-xl">My Booking</button>
-                                    <button onClick={() => { navigate('/myprofile'); setSideBar(false); }} className="text-left text-sm font-bold text-gray-600 hover:text-rose-500 hover:bg-gray-50 px-4 py-2.5 rounded-xl transition-all">My Profile</button>
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={handleLogout}
-                                className="flex items-center justify-center gap-2 text-white text-sm font-bold bg-rose-500 hover:bg-rose-600 w-full py-3 rounded-xl transition-all shadow-md mt-auto"
-                            >
-                                <LogOut size={16} /> Logout
-                            </button>
-                        </div>
+        <div className="min-h-screen bg-[#f5f5f5] text-gray-800 font-sans">
+            {/* --- NAVBAR --- */}
+            <nav className="bg-[#333545] text-white sticky top-0 z-50 px-4 py-3 shadow-md">
+                <div className="max-w-6xl mx-auto flex items-center justify-between">
+                    {/* Logo Branding */}
+                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
+                        <p className="text-white text-2xl font-black tracking-tight">
+                            event<span className="text-rose-500">hub</span>
+                        </p>
                     </div>
-                )}
-
-                {/* Mobile Search Bar Wrapper */}
-                <div
-                    className="md:hidden relative flex items-center h-9 flex-1 max-w-[160px] xs:max-w-[200px] bg-gray-100 rounded-lg px-2 border border-transparent focus-within:border-rose-300 focus-within:bg-white transition-all shadow-inner"
-                    ref={searchRef}
-                >
-                    <Search size={16} className="text-gray-400 mr-1.5" />
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        className="bg-transparent border-none focus:ring-0 text-xs w-full outline-none p-0"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onFocus={() => searchQuery && setIsDropdownOpen(true)}
-                    />
-                    {searchQuery && (
-                        <X
-                            size={14}
-                            onClick={() => { setSearchQuery(""); setIsDropdownOpen(false); }}
-                            className="text-gray-400 cursor-pointer hover:text-rose-500"
-                        />
-                    )}
-                </div>
-
-                {/* Desktop Search Bar */}
-                <div className="hidden md:block relative w-1/3" ref={searchRef}>
-                    <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 border border-transparent focus-within:border-rose-300 focus-within:bg-white transition-all shadow-inner">
-                        <Search size={18} className="text-gray-400 mr-2" />
-                        <input
-                            type="text"
-                            placeholder="Search for events..."
-                            className="bg-transparent border-none focus:ring-0 text-sm w-full outline-none"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onFocus={() => searchQuery && setIsDropdownOpen(true)}
-                        />
-                        {searchQuery && (
-                            <X
-                                size={16}
-                                onClick={() => { setSearchQuery(""); setIsDropdownOpen(false); }}
-                                className="text-gray-400 cursor-pointer hover:text-rose-500"
-                            />
-                        )}
-                    </div>
-
-                    {isDropdownOpen && filteredResults.length > 0 && (
-                        <div className="absolute top-11 left-0 w-full bg-white border border-gray-200 rounded-b-xl shadow-2xl z-[60] overflow-hidden">
-                            {filteredResults.map((item, index) => (
-                                <div
-                                    key={item.id}
-                                    onClick={() => {
-                                        setSearchQuery(item.title || "");
-                                        setIsDropdownOpen(false);
-                                        navigate(`/booking/${item.id}`);
-                                    }}
-                                    className={`px-4 py-3 cursor-pointer border-b border-gray-50 flex items-center gap-3 transition-colors ${index === activeIndex ? "bg-rose-100" : "hover:bg-rose-50"}`}
-                                >
-                                    <img
-                                        src={item.image ? `${BASE_URLs}${item.image}` : "https://via.placeholder.com/40"}
-                                        alt=""
-                                        className="w-8 h-8 rounded object-cover"
-                                    />
-                                    <div>
-                                        <p className="text-sm font-bold text-gray-700 truncate">{item.title}</p>
-                                        <p className="text-[10px] text-gray-400 uppercase">{item.location}</p>
-                                    </div>
-                                </div>
-                            ))}
+                    
+                    {/* Minimalist Profile Indicator */}
+                    <div className="flex items-center gap-3 bg-[#43465e] px-4 py-1.5 rounded-full border border-gray-600/40">
+                        <div className="w-7 h-7 bg-rose-500 rounded-full flex items-center justify-center text-xs font-bold uppercase text-white shadow-inner">
+                            {user?.username?.charAt(0) || <User size={12} />}
                         </div>
-                    )}
-                </div>
-
-                <div className="hidden md:flex items-center gap-6">
-                    <button onClick={() => navigate('/home')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">Home</button>
-                    <button className="hidden lg:block text-sm font-bold text-rose-500 underline underline-offset-8 decoration-2">Events </button>
-                    <button onClick={() => navigate('/mybooking')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">My Booking</button>
-                    <button onClick={() => navigate('/myprofile')} className="hidden lg:block text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">My profile</button>
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 text-white text-xs font-bold bg-rose-500 hover:bg-rose-600 px-5 py-2.5 rounded-full transition-all shadow-md"
-                    >
-                        <LogOut size={14} /> Logout
-                    </button>
+                        <span className="text-xs font-semibold tracking-wide hidden sm:inline text-gray-200">
+                            Hi, {user?.username || "Guest"}
+                        </span>
+                    </div>
                 </div>
             </nav>
-            {/* --- NAVBAR END --- */}
 
-            <div className="pt-28 pb-12 px-6">
-                <div className="max-w-4xl mx-auto">
-                    <div className="mb-10">
-                        <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
-                            My <span className="text-rose-500">Bookings</span>
-                        </h1>
-                        <p className="text-gray-500 font-medium">Manage your tickets and download your passes.</p>
-                    </div>
+            {/* --- CORE CONTENT LAYOUT --- */}
+            <div className="max-w-6xl mx-auto px-4 py-8">
+                {/* Back Button */}
+                <button
+                    onClick={() => navigate(-1)}
+                    className="flex items-center gap-2 text-gray-500 font-bold text-xs mb-6 hover:text-rose-500 transition-colors group uppercase tracking-wider"
+                >
+                    <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" /> Back to Discover
+                </button>
 
-                    {bookings.length === 0 ? (
-                        <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-200">
-                            <Ticket className="mx-auto text-gray-300 mb-4" size={48} />
-                            <p className="text-gray-500 font-medium">No bookings found.</p>
-                            <button onClick={() => navigate('/')} className="mt-4 text-rose-500 font-bold hover:underline">
-                                Browse Events
-                            </button>
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+                    
+                    {/* --- LEFT SIDEBAR PANEL --- */}
+                    <aside className="w-full md:w-72 bg-white rounded-2xl border border-gray-200/60 shadow-sm overflow-hidden sticky md:top-24">
+                        <div className="p-6 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100 flex flex-col items-center text-center">
+                            <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 font-black text-2xl uppercase border-2 border-white shadow-md mb-3">
+                                {user?.username?.charAt(0) || <User size={24} />}
+                            </div>
+                            <h3 className="font-bold text-gray-900 text-base">{user?.username || "Guest"}</h3>
+                            <p className="text-xs text-gray-400 mt-0.5 truncate max-w-[200px]">{user?.email || ""}</p>
                         </div>
-                    ) : (
-                        <div className="space-y-6">
-                            {bookings
-                                .filter(b => b.event?.title.toLowerCase().includes(searchQuery.toLowerCase()))
-                                .map((booking) => (
-                                    <div key={booking.id} className="group bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col md:flex-row hover:shadow-xl transition-all duration-300">
-                                        <div className="w-full md:w-48 h-40 md:h-auto bg-gray-200 overflow-hidden">
-                                            <img
-                                                src={`${BASE_URLs}${booking.event?.image}`}
-                                                alt="event"
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                                onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }}
-                                            />
-                                        </div>
+                        
+                        <div className="p-3 space-y-0.5">
+                            
+                            <button onClick={() => navigate('/myprofile')} className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3.5 rounded-xl transition-all">
+                                <User size={16} className="text-gray-400" /> Account & Profile
+                            </button>
+                            <button onClick={() => navigate('/fav')} className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3.5 rounded-xl transition-all">
+                                <Heart size={16} /> Saved Favourites
+                            </button>
+                            <button className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-rose-600 bg-rose-50 px-4 py-3.5 rounded-xl">
+                                <ShieldCheck size={16} /> Purchase History
+                            </button>
+                            
+                            
+                            <div className="pt-4 mt-2 border-t border-gray-100">
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-500 hover:text-red-600 hover:bg-red-50/50 px-4 py-3.5 rounded-xl transition-all"
+                                >
+                                    <LogOut size={16} /> Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    </aside>
 
-                                        <div className="p-6 flex-1 flex flex-col justify-between">
-                                            <div>
-                                                <div className="flex justify-between items-start mb-2">
-                                                    <h2 className="text-xl font-black text-gray-900 group-hover:text-rose-500 transition-colors line-clamp-1">
-                                                        {booking.event?.title || "Event Title"}
-                                                    </h2>
-                                                    <span className="bg-emerald-100 text-emerald-700 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
-                                                        Confirmed
-                                                    </span>
-                                                </div>
+                    {/* --- MAIN ACCOUNT DASHBOARD --- */}
+                    <main className="flex-1 w-full bg-white rounded-2xl shadow-sm border border-gray-200/60 overflow-hidden">
+                        {/* Section Header */}
+                        <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/50">
+                            <div>
+                                <h2 className="text-lg font-black text-gray-900 tracking-tight">My Bookings</h2>
+                                <p className="text-xs text-gray-400 mt-0.5">Manage your tickets, view active codes, and download gate passes.</p>
+                            </div>
 
-                                                <div className="flex flex-wrap gap-4 text-sm text-gray-500 mt-4">
-                                                    <div className="flex items-center gap-1.5 bg-gray-50 px-3 py-1 rounded-lg">
-                                                        <Calendar size={14} className="text-rose-500" />
-                                                        <span className="font-medium text-gray-700">
-                                                            {booking.event?.date ? new Date(booking.event.date).toDateString() : "Date TBD"}
+                            {/* Search Filter input tool inside dashboard block header */}
+                            <div className="relative w-full sm:w-64">
+                                <div className="flex items-center bg-white border border-gray-200 rounded-xl px-3 py-2 focus-within:border-rose-400 focus-within:shadow-sm transition-all">
+                                    <Search size={14} className="text-gray-400 mr-2" />
+                                    <input
+                                        type="text"
+                                        placeholder="Filter tickets..."
+                                        className="bg-transparent text-xs font-semibold text-gray-800 outline-none w-full"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
+                                    {searchQuery && (
+                                        <X 
+                                            size={14} 
+                                            className="text-gray-400 cursor-pointer hover:text-rose-500 ml-1" 
+                                            onClick={() => setSearchQuery("")} 
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Information Grid Container */}
+                        <div className="p-6 sm:p-8 space-y-6">
+                            {filteredBookings.length === 0 ? (
+                                <div className="text-center py-16 border-2 border-dashed border-gray-100 rounded-2xl">
+                                    <Ticket className="mx-auto text-gray-300 mb-3" size={40} />
+                                    <p className="text-sm text-gray-500 font-medium">No bookings match your search parameters.</p>
+                                    <button onClick={() => navigate('/event')} className="mt-2 text-rose-500 text-xs font-bold hover:underline">
+                                        Browse Active Events
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {filteredBookings.map((booking) => (
+                                        <div 
+                                            key={booking.id} 
+                                            className="group bg-white rounded-2xl border border-gray-200/70 overflow-hidden flex flex-col sm:flex-row hover:border-rose-200 hover:shadow-sm transition-all duration-200"
+                                        >
+                                            {/* Left side Image block */}
+                                            <div className="w-full sm:w-40 h-32 sm:h-auto bg-gray-100 overflow-hidden relative">
+                                                <img
+                                                    src={`${BASE_URLs}${booking.event?.image}`}
+                                                    alt="event location display"
+                                                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
+                                                    onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }}
+                                                />
+                                            </div>
+
+                                            {/* Right Content block */}
+                                            <div className="p-5 flex-1 flex flex-col justify-between gap-4">
+                                                <div>
+                                                    <div className="flex justify-between items-start gap-2 mb-1.5">
+                                                        <h3 className="text-base font-bold text-gray-900 group-hover:text-rose-600 transition-colors line-clamp-1">
+                                                            {booking.event?.title || "Event Title"}
+                                                        </h3>
+                                                        <span className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap">
+                                                            Confirmed
                                                         </span>
                                                     </div>
-                                                    <div className="flex items-center gap-1.5 bg-gray-50 px-3 py-1 rounded-lg">
-                                                        <MapPin size={14} className="text-rose-500" />
-                                                        <span className="font-medium text-gray-700">{booking.event?.location || "Online"}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1.5 bg-gray-50 px-3 py-1 rounded-lg">
-                                                        <Ticket size={14} className="text-rose-500" />
-                                                        <span className="font-black text-gray-900">Qty: {booking.quantity}</span>
+
+                                                    <div className="flex flex-wrap gap-2.5 text-xs text-gray-500">
+                                                        <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-md border border-gray-100">
+                                                            <Calendar size={12} className="text-rose-500" />
+                                                            <span className="font-semibold text-gray-600">
+                                                                {booking.event?.date ? new Date(booking.event.date).toDateString() : "Date TBD"}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-md border border-gray-100">
+                                                            <MapPin size={12} className="text-rose-500" />
+                                                            <span className="font-semibold text-gray-600 truncate max-w-[140px]">
+                                                                {booking.event?.location || "Online"}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <div className="mt-8 pt-5 border-t border-gray-50 flex justify-between items-center">
-                                                <div>
-                                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Booking ID: #{booking.id}</p>
-                                                    <p className="text-lg font-black text-gray-900">₹{booking.quantity * (booking.event?.price || 0)}</p>
+                                                {/* Action Items Footer */}
+                                                <div className="flex items-center justify-between pt-3 border-t border-gray-100/80">
+                                                    <span className="text-[10px] text-gray-400 font-bold tracking-wider uppercase">
+                                                        ID: #{booking.id}
+                                                    </span>
+                                                    <button
+                                                        onClick={() => handleDownload(booking.id)}
+                                                        className="flex items-center gap-1.5 px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+                                                    >
+                                                        <Download size={12} /> Download PDF
+                                                    </button>
                                                 </div>
-
-                                                <button
-                                                    onClick={() => handleDownload(booking.id)}
-                                                    className="flex items-center gap-2 bg-gray-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-rose-500 transition-all shadow-lg active:scale-95"
-                                                >
-                                                    <Download size={16} /> Download
-                                                </button>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
+                            )}
                         </div>
-                    )}
+                    </main>
+
                 </div>
+
+                <footer className="text-center mt-12 text-gray-400 text-xs font-medium">
+                    Secure checkout backend active. Need assistance? <span className="text-rose-500 cursor-pointer hover:underline font-semibold">Contact Support</span>
+                </footer>
             </div>
         </div>
     );
