@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { getAllBoking, BASE_URLs, downloadTicket, curretUser } from '../api/Allapi';
-import { Loader2, Calendar, MapPin, Ticket, Search, X, LogOut, Download, ArrowLeft, BookOpen, ShieldCheck, User, Heart } from 'lucide-react';
+import { Loader2, Calendar, MapPin, Ticket, Search, X, LogOut, Download, ArrowLeft, BookOpen, ShieldCheck, User, Heart, Menu, MenuIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 function Mybooking() {
@@ -8,7 +8,7 @@ function Mybooking() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
-    
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -55,7 +55,7 @@ function Mybooking() {
     };
 
     // Filter logic for booking tickets based on search query
-    const filteredBookings = bookings.filter(b => 
+    const filteredBookings = bookings.filter(b =>
         b.event?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         b.event?.location?.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -71,13 +71,16 @@ function Mybooking() {
             {/* --- NAVBAR --- */}
             <nav className="bg-[#333545] text-white sticky top-0 z-50 px-4 py-3 shadow-md">
                 <div className="max-w-6xl mx-auto flex items-center justify-between">
+                    <div>
+                        <Menu />
+                    </div>
                     {/* Logo Branding */}
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
                         <p className="text-white text-2xl font-black tracking-tight">
                             event<span className="text-rose-500">hub</span>
                         </p>
                     </div>
-                    
+
                     {/* Minimalist Profile Indicator */}
                     <div className="flex items-center gap-3 bg-[#43465e] px-4 py-1.5 rounded-full border border-gray-600/40">
                         <div className="w-7 h-7 bg-rose-500 rounded-full flex items-center justify-center text-xs font-bold uppercase text-white shadow-inner">
@@ -100,20 +103,19 @@ function Mybooking() {
                     <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" /> Back to Discover
                 </button>
 
-                <div className="flex flex-col md:flex-row gap-8 items-start">
-                    
+                <div claqssName="flex flex-col md:flex-row gap-8 items-start">
+
                     {/* --- LEFT SIDEBAR PANEL --- */}
-                    <aside className="w-full md:w-72 bg-white rounded-2xl border border-gray-200/60 shadow-sm overflow-hidden sticky md:top-24">
-                        <div className="p-6 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100 flex flex-col items-center text-center">
-                            <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 font-black text-2xl uppercase border-2 border-white shadow-md mb-3">
-                                {user?.username?.charAt(0) || <User size={24} />}
-                            </div>
-                            <h3 className="font-bold text-gray-900 text-base">{user?.username || "Guest"}</h3>
-                            <p className="text-xs text-gray-400 mt-0.5 truncate max-w-[200px]">{user?.email || ""}</p>
+                    <aside className="hidden lg:block w-full md:w-72 bg-white rounded-2xl border border-gray-200/60 shadow-sm overflow-hidden sticky md:top-24">                        <div className="p-6 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100 flex flex-col items-center text-center">
+                        <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 font-black text-2xl uppercase border-2 border-white shadow-md mb-3">
+                            {user?.username?.charAt(0) || <User size={24} />}
                         </div>
-                        
+                        <h3 className="font-bold text-gray-900 text-base">{user?.username || "Guest"}</h3>
+                        <p className="text-xs text-gray-400 mt-0.5 truncate max-w-[200px]">{user?.email || ""}</p>
+                    </div>
+
                         <div className="p-3 space-y-0.5">
-                            
+
                             <button onClick={() => navigate('/myprofile')} className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3.5 rounded-xl transition-all">
                                 <User size={16} className="text-gray-400" /> Account & Profile
                             </button>
@@ -123,8 +125,8 @@ function Mybooking() {
                             <button className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-rose-600 bg-rose-50 px-4 py-3.5 rounded-xl">
                                 <ShieldCheck size={16} /> Purchase History
                             </button>
-                            
-                            
+
+
                             <div className="pt-4 mt-2 border-t border-gray-100">
                                 <button
                                     onClick={handleLogout}
@@ -157,10 +159,10 @@ function Mybooking() {
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
                                     {searchQuery && (
-                                        <X 
-                                            size={14} 
-                                            className="text-gray-400 cursor-pointer hover:text-rose-500 ml-1" 
-                                            onClick={() => setSearchQuery("")} 
+                                        <X
+                                            size={14}
+                                            className="text-gray-400 cursor-pointer hover:text-rose-500 ml-1"
+                                            onClick={() => setSearchQuery("")}
                                         />
                                     )}
                                 </div>
@@ -180,8 +182,8 @@ function Mybooking() {
                             ) : (
                                 <div className="space-y-4">
                                     {filteredBookings.map((booking) => (
-                                        <div 
-                                            key={booking.id} 
+                                        <div
+                                            key={booking.id}
                                             className="group bg-white rounded-2xl border border-gray-200/70 overflow-hidden flex flex-col sm:flex-row hover:border-rose-200 hover:shadow-sm transition-all duration-200"
                                         >
                                             {/* Left side Image block */}
@@ -223,10 +225,7 @@ function Mybooking() {
                                                 </div>
 
                                                 {/* Action Items Footer */}
-                                                <div className="flex items-center justify-between pt-3 border-t border-gray-100/80">
-                                                    <span className="text-[10px] text-gray-400 font-bold tracking-wider uppercase">
-                                                        ID: #{booking.id}
-                                                    </span>
+                                                <div className="flex items-center justify-end pt-3 border-t border-gray-100/80">
                                                     <button
                                                         onClick={() => handleDownload(booking.id)}
                                                         className="flex items-center gap-1.5 px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
@@ -241,12 +240,12 @@ function Mybooking() {
                             )}
                         </div>
                     </main>
-
                 </div>
 
                 <footer className="text-center mt-12 text-gray-400 text-xs font-medium">
                     Secure checkout backend active. Need assistance? <span className="text-rose-500 cursor-pointer hover:underline font-semibold">Contact Support</span>
                 </footer>
+
             </div>
         </div>
     );

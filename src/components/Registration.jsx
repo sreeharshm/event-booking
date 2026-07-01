@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { custRegistration } from '../api/Allapi';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Phone, Lock, UserPlus } from 'lucide-react';
+import { User, Mail, Phone, Lock, Ticket } from 'lucide-react';
 
 function Registration() {
     const [register, setRegister] = useState({
@@ -39,119 +39,126 @@ function Registration() {
     };
 
     return (
-        <div className='flex justify-center items-center min-h-screen bg-[#f8fafc] px-4 relative overflow-hidden'>
-            {/* Background Accents */}
-            <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-rose-100 rounded-full blur-3xl opacity-50"></div>
-            <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
+        <div className='flex justify-center items-center min-h-screen bg-[#1F2533] px-4 relative antialiased py-8'>
+            {/* Ambient Background Glow - using #F84464 softly to give depth */}
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#F84464] rounded-full blur-[140px] opacity-10 pointer-events-none"></div>
 
-            <div className='bg-white w-full max-w-lg shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-3xl p-8 md:p-12 z-10 border border-gray-100'>
+            <div className='bg-white w-full max-w-md shadow-2xl rounded-lg p-8 md:p-10 z-10 border border-gray-100'>
+                {/* Branding / Header Header */}
                 <div className='mb-8 text-center'>
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-rose-50 text-rose-500 rounded-2xl mb-4">
-                        <UserPlus size={28} />
+                    <div className="inline-flex items-center justify-center w-14 h-14 bg-[#F84464]/10 text-[#F84464] rounded-xl mb-3">
+                        <Ticket size={28} className="transform -rotate-12" />
                     </div>
-                    <h2 className='text-3xl font-extrabold text-gray-900 tracking-tight'>Create Account</h2>
-                    <p className='text-gray-500 mt-2 font-medium'>Join EventPass to start booking events</p>
+                    <h2 className='text-2xl font-black text-[#1F2533] tracking-tight'>
+                        it's<span className='text-[#F84464]'>show</span>time
+                    </h2>
+                    <p className='text-gray-500 text-sm mt-1 font-medium'>Join EventPass to start booking events</p>
                 </div>
 
                 {error && (
-                    <div className='bg-red-50 text-red-600 p-3 mb-6 text-sm rounded-xl border border-red-100 text-center font-medium'>
+                    <div className='bg-red-50 text-red-600 p-3 mb-6 text-xs font-semibold rounded border border-red-100 text-center'>
                         {error}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className='grid grid-cols-1 md:grid-cols-2 gap-5'>
-                    {/* Username */}
-                    <div className="md:col-span-2">
-                        <label className='block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 ml-1'>Username</label>
+                <form onSubmit={handleSubmit} className='space-y-5'>
+                    {/* Username Field */}
+                    <div>
+                        <label className='block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-2'>
+                            Username
+                        </label>
                         <div className='relative'>
                             <input
                                 type="text"
                                 name='username'
                                 required
-                                className='w-full bg-gray-50 border border-gray-200 rounded-xl p-3 pl-11 focus:ring-2 focus:ring-rose-400 focus:bg-white outline-none transition-all'
+                                className='w-full bg-gray-50 border border-gray-200 rounded p-3 pl-10 text-sm text-gray-800 focus:ring-1 focus:ring-[#F84464] focus:border-[#F84464] focus:bg-white outline-none transition-all'
                                 placeholder='johndoe'
                                 value={register.username}
                                 onChange={handleChange}
                             />
-                            <User className='absolute left-4 top-3.5 text-gray-400' size={18} />
+                            <User className='absolute left-3.5 top-3.5 text-gray-400' size={16} />
                         </div>
                     </div>
 
-                    {/* Email */}
-                    <div className="md:col-span-2">
-                        <label className='block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 ml-1'>Email Address</label>
+                    {/* Email Field */}
+                    <div>
+                        <label className='block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-2'>
+                            Email Address
+                        </label>
                         <div className='relative'>
                             <input
                                 type="email"
                                 name='email'
                                 required
-                                className='w-full bg-gray-50 border border-gray-200 rounded-xl p-3 pl-11 focus:ring-2 focus:ring-rose-400 focus:bg-white outline-none transition-all'
+                                className='w-full bg-gray-50 border border-gray-200 rounded p-3 pl-10 text-sm text-gray-800 focus:ring-1 focus:ring-[#F84464] focus:border-[#F84464] focus:bg-white outline-none transition-all'
                                 placeholder='john@example.com'
                                 value={register.email}
                                 onChange={handleChange}
                             />
-                            <Mail className='absolute left-4 top-3.5 text-gray-400' size={18} />
+                            <Mail className='absolute left-3.5 top-3.5 text-gray-400' size={16} />
                         </div>
                     </div>
 
-                    {/* Phone Number */}
+                    {/* Phone Number Field */}
                     <div>
-                        <label className='block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 ml-1'>Phone</label>
+                        <label className='block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-2'>
+                            Phone Number
+                        </label>
                         <div className='relative'>
                             <input
                                 type="text"
                                 name='ph_number'
                                 required
-                                className='w-full bg-gray-50 border border-gray-200 rounded-xl p-3 pl-11 focus:ring-2 focus:ring-rose-400 focus:bg-white outline-none transition-all'
+                                className='w-full bg-gray-50 border border-gray-200 rounded p-3 pl-10 text-sm text-gray-800 focus:ring-1 focus:ring-[#F84464] focus:border-[#F84464] focus:bg-white outline-none transition-all'
                                 placeholder='1234567890'
                                 value={register.ph_number}
                                 onChange={handleChange}
                             />
-                            <Phone className='absolute left-4 top-3.5 text-gray-400' size={18} />
+                            <Phone className='absolute left-3.5 top-3.5 text-gray-400' size={16} />
                         </div>
                     </div>
 
-                    {/* Password */}
+                    {/* Password Field */}
                     <div>
-                        <label className='block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 ml-1'>Password</label>
+                        <label className='block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-2'>
+                            Password
+                        </label>
                         <div className='relative'>
                             <input
                                 type="password"
                                 name='password'
                                 required
-                                className='w-full bg-gray-50 border border-gray-200 rounded-xl p-3 pl-11 focus:ring-2 focus:ring-rose-400 focus:bg-white outline-none transition-all'
+                                className='w-full bg-gray-50 border border-gray-200 rounded p-3 pl-10 text-sm text-gray-800 focus:ring-1 focus:ring-[#F84464] focus:border-[#F84464] focus:bg-white outline-none transition-all'
                                 placeholder='••••••••'
                                 value={register.password}
                                 onChange={handleChange}
                             />
-                            <Lock className='absolute left-4 top-3.5 text-gray-400' size={18} />
+                            <Lock className='absolute left-3.5 top-3.5 text-gray-400' size={16} />
                         </div>
                     </div>
 
-                    {/* Submit Button */}
-                    <div className="md:col-span-2 mt-4">
-                        <button
-                            type='submit'
-                            disabled={loading}
-                            className='w-full bg-gray-900 hover:bg-black disabled:bg-gray-400 text-white font-bold py-4 rounded-2xl shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2'
-                        >
-                            {loading ? (
-                                <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            ) : (
-                                "Create Account"
-                            )}
-                        </button>
-                    </div>
-                </form>
+                    {/* Vibrant Action Button */}
+                    <button
+                        type='submit'
+                        disabled={loading}
+                        className='w-full bg-[#F84464] hover:bg-[#e23b59] disabled:bg-gray-300 text-white font-bold py-3.5 rounded text-sm tracking-wide shadow-md transition-colors active:scale-[0.99] flex items-center justify-center gap-2 mt-4'
+                    >
+                        {loading ? (
+                            <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                            "Create Account"
+                        )}
+                    </button>
 
-                <div className='mt-8 pt-6 border-t border-gray-100 text-center'>
-                    <p className='text-gray-500 text-sm'>
+                    {/* Navigation Link to Login */}
+                    <p className='text-center text-gray-500 text-xs pt-4 border-t border-gray-100 mt-6'>
                         Already have an account? 
-                        <Link to='/login' className='text-rose-500 font-bold hover:underline ml-1'>
+                        <Link to='/login' className='text-[#F84464] font-bold hover:underline ml-1'>
                             Log in
                         </Link>
                     </p>
-                </div>
+                </form>
             </div>
         </div>
     );

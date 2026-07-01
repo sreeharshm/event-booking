@@ -2,57 +2,63 @@ import React, { useState } from 'react'
 
 function Sample() {
 
+  const nums = [8, 3, 10, 1, 6]
 
-  async function hello() {
-    return Promise.resolve("Hello World")
+  let smallest = nums[0]
+
+  for(let num of nums){
+    if(smallest > num){
+      smallest = num
+    }
   }
-  hello().then(res => console.log(res))
+  console.log(smallest);
 
 
+  const nums1 = [2, 4, 6, 8]
 
-  const users = [
-    {name : "john", age : 20},
-    {name : "jane", age : 30}
-  ]
+  let total = 0
 
-  function getUsers(){
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(users)
-      }, 2000)
-    })
+  for (let num of nums1){
+    total += num;
   }
-  getUsers().then(data => console.log(data))
+
+  console.log(total);
+  
+
+
+  const nums2 = [1, 2, 3, 4, 6, 7];
+
+  let count = 0;
+
+  for (let num of nums2 ) {
+    if( num % 2 !== 0 ){
+      count ++
+      console.log(num);
+    }
+  }
+  
+  console.log(count);
 
 
 
-  const title = document.getElementById("title")
+  const nums3 = 5
 
-  title.textContent = "hello js";
+  if( nums3 % 2 === 0){
+    console.log("even");
+  }
+  else{
+    console.log("odd"); 
+  }
+  
 
+  const str = "javascripts"
 
+  let reversed = str.split("").reverse().join("")
 
-  const btn = document.getElementById("btn")
+ console.log(str === reversed? "palindrome" : "not palindrome");
+ 
 
-  btn.addEventListener("click",() => {
-    console.log("Button clicked");
-    
-  })
-
-
-
-
-  const product = [
-    { name: "phone", category: "electronics" },
-    { name: "shirt", category: "clothes" },
-    { name: "laptop", category: "electronics" }
-  ]
-
-  const electronic = product.filter(prd =>
-    prd.category === "electronics")
-    .map(prd => prd.name)
-  console.log(electronic);
-
+  
 
 
   return (
@@ -60,9 +66,7 @@ function Sample() {
       <div>
         <button id='btn' >chnage</button>
       </div>
-
     </div>
-
   )
 }
 

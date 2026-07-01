@@ -65,20 +65,20 @@ function User() {
                         {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
                     </button>
                     <p className="text-xl font-black tracking-tight text-white uppercase">
-                        BOOKMY<span className="text-[#df183a]">SHOW</span> <span className="text-xs font-medium text-gray-400 tracking-normal normal-case border-l border-gray-600 pl-2 ml-1">Admin</span>
+                        EVENT<span className="text-[#df183a]">HUB</span> <span className="text-xs font-medium text-gray-400 tracking-normal normal-case border-l border-gray-600 pl-2 ml-1">Admin</span>
                     </p>
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <span className="hidden sm:block text-xs font-bold bg-[#333a50] text-[#df183a] px-3 py-1 rounded-full uppercase tracking-wider border border-[#df183a]/20">
-                        Super Admin
-                    </span>
+                    <button onClick={handleLogout} className="flex items-center gap-2 border border-gray-600 text-gray-300 text-xs font-bold rounded-lg px-4 py-2 hover:bg-[#f84464] hover:text-white hover:border-[#f84464] transition-all">
+                        <LogOut size={14} /> Logout
+                    </button>
                 </div>
             </nav>
 
 
             {/* Main Content Area */}
-            <main className="flex-1 md:ml-64 pt-24 px-4 md:px-8 pb-12">
+            <main className="flex-1 md:ml-64 pt-24 px-4 md:px-8 pb-12 overflow-x-hidden">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex justify-between items-center mb-8">
                         <h1 className="text-2xl font-black text-white tracking-tight">User Management</h1>

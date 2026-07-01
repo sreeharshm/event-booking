@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { custLogin } from '../api/Allapi';
 import { useNavigate, Link } from 'react-router-dom';
-import { Eye, EyeOff, Lock, User, CalendarDays } from 'lucide-react';
+import { Eye, EyeOff, Lock, User, Ticket } from 'lucide-react';
 
 function Login() {
     const [login, setLogin] = useState({ username: "", password: "" });
@@ -31,7 +31,7 @@ function Login() {
 
             // Redirect based on role
             if (user.is_staff) {
-                navigate('/eventadd'); // Staff/Admin Panel
+                navigate('/user'); // Staff/Admin Panel
             } else {
                 navigate('/home'); // Event Browsing Page
             }
@@ -43,54 +43,55 @@ function Login() {
     };
 
     return (
-        <div className='flex justify-center items-center min-h-screen bg-[#f8fafc] px-4 overflow-hidden relative'>
-            {/* Background Decorative Circles */}
-            <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-rose-100 rounded-full blur-3xl opacity-50"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
+        <div className='flex justify-center items-center min-h-screen bg-[#1F2533] px-4 relative antialiased'>
+            {/* Ambient Background Glow reminiscent of cinema screens */}
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#F84464] rounded-full blur-[140px] opacity-10 pointer-events-none"></div>
 
-            <div className='bg-white w-full max-w-md shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-3xl p-10 z-10 border border-gray-100'>
-                <div className='mb-10 text-center'>
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl mb-4">
-                        <CalendarDays size={32} />
+            <div className='bg-white w-full max-w-md shadow-2xl rounded-lg p-8 md:p-10 z-10 border border-gray-100'>
+                <div className='mb-8 text-center'>
+                    <div className="inline-flex items-center justify-center w-14 h-14 bg-[#F84464]/10 text-[#F84464] rounded-xl mb-3">
+                        <Ticket size={28} className="transform -rotate-12" />
                     </div>
-                    <h2 className='text-3xl font-extrabold text-gray-900 tracking-tight'>EventPass</h2>
-                    <p className='text-gray-500 mt-2 font-medium'>Sign in to book your next experience</p>
+                    <h2 className='text-2xl font-black text-[#1F2533] tracking-tight'>
+                        it's<span className='text-[#F84464]'>show</span>time
+                    </h2>
+                    <p className='text-gray-500 text-sm mt-1 font-medium'>Sign in to manage your tickets and bookings</p>
                 </div>
 
                 {error && (
-                    <div className='bg-red-50 text-red-600 p-3 mb-6 text-sm rounded-xl border border-red-100 text-center animate-pulse'>
+                    <div className='bg-red-50 text-red-600 p-3 mb-6 text-xs font-semibold rounded border border-red-100 text-center'>
                         {error}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className='space-y-6'>
+                <form onSubmit={handleSubmit} className='space-y-5'>
                     {/* Username */}
                     <div>
-                        <label className='block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 ml-1'>
-                            Username
+                        <label className='block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-2'>
+                            Username or Email
                         </label>
                         <div className='relative'>
                             <input
                                 type="text"
                                 name='username'
                                 required
-                                className='w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 pl-11 focus:ring-2 focus:ring-rose-400 focus:bg-white outline-none transition-all'
-                                placeholder='Enter username'
+                                className='w-full bg-gray-50 border border-gray-200 rounded p-3 pl-10 text-sm text-gray-800 focus:ring-1 focus:ring-[#F84464] focus:border-[#F84464] focus:bg-white outline-none transition-all'
+                                placeholder='Enter your username'
                                 value={login.username}
                                 onChange={handleChange}
                             />
-                            <User className='absolute left-4 top-4 text-gray-400' size={18} />
+                            <User className='absolute left-3.5 top-3.5 text-gray-400' size={16} />
                         </div>
                     </div>
 
                     {/* Password */}
                     <div>
-                        <div className="flex justify-between mb-2 ml-1">
-                            <label className='text-xs font-bold uppercase tracking-wider text-gray-400'>
+                        <div className="flex justify-between mb-2">
+                            <label className='text-[11px] font-bold uppercase tracking-wider text-gray-400'>
                                 Password
                             </label>
-                            <Link to='/otp' className='text-xs font-bold text-rose-500 hover:text-rose-600'>
-                                Forgot?
+                            <Link to='/otp' className='text-xs font-semibold text-[#F84464] hover:underline'>
+                                Forgot Password?
                             </Link>
                         </div>
                         <div className='relative'>
@@ -98,18 +99,18 @@ function Login() {
                                 type={showPassword ? "text" : "password"}
                                 name='password'
                                 required
-                                className='w-full bg-gray-50 border border-gray-200 rounded-xl p-3.5 pl-11 pr-11 focus:ring-2 focus:ring-rose-400 focus:bg-white outline-none transition-all'
+                                className='w-full bg-gray-50 border border-gray-200 rounded p-3 pl-10 pr-10 text-sm text-gray-800 focus:ring-1 focus:ring-[#F84464] focus:border-[#F84464] focus:bg-white outline-none transition-all'
                                 placeholder='••••••••'
                                 value={login.password}
                                 onChange={handleChange}
                             />
-                            <Lock className='absolute left-4 top-4 text-gray-400' size={18} />
+                            <Lock className='absolute left-3.5 top-3.5 text-gray-400' size={16} />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className='absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors'
+                                className='absolute right-3.5 top-3.5 text-gray-400 hover:text-gray-600 transition-colors'
                             >
-                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                             </button>
                         </div>
                     </div>
@@ -118,19 +119,19 @@ function Login() {
                     <button
                         type='submit'
                         disabled={loading}
-                        className='w-full bg-gray-900 hover:bg-black disabled:bg-gray-400 text-white font-bold py-4 rounded-2xl shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2'
+                        className='w-full bg-[#F84464] hover:bg-[#e23b59] disabled:bg-gray-300 text-white font-bold py-3.5 rounded text-sm tracking-wide shadow-md transition-colors active:scale-[0.99] flex items-center justify-center gap-2 mt-2'
                     >
                         {loading ? (
-                            <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                         ) : (
                             "Sign In"
                         )}
                     </button>
 
-                    <p className='text-center text-gray-500 text-sm pt-4'>
-                        New to EventPass? 
-                        <Link to='/register' className='text-rose-500 font-bold hover:underline ml-1'>
-                            Create Account
+                    <p className='text-center text-gray-500 text-xs pt-4 border-t border-gray-100 mt-6'>
+                        New to the platform? 
+                        <Link to='/register' className='text-[#F84464] font-bold hover:underline ml-1'>
+                            Register Now
                         </Link>
                     </p>
                 </form>

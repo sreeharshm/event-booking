@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Calendar, Ticket, LogOut, Loader2, ShieldAlert, CheckCircle, Menu, X} from 'lucide-react';
+import { Users, Calendar, Ticket, LogOut, Loader2, ShieldAlert, CheckCircle, Menu, X } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { getAllBoking } from '../api/Allapi'; // Ensure correct path mapping here
 
@@ -60,21 +60,20 @@ function Allbooking() {
 
             {/* Global Branding Header Bar */}
             <nav className="fixed top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-8 bg-[#2b3144] border-b border-gray-700/50">
+                <p className="text-xl font-black tracking-tight text-white uppercase">
+                    EVENT<span className="text-[#df183a]">HUB</span> <span className="text-xs font-medium text-gray-400 tracking-normal normal-case border-l border-gray-600 pl-2 ml-1">Admin</span>
+                </p>
                 <div className="flex items-center gap-3 md:gap-4">
                     <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="md:hidden text-gray-400 hover:text-white transition-colors">
                         {isSidebarOpen ? <X size={22} /> : <Menu size={22} />}
                     </button>
-                    <p className="text-lg md:text-xl font-black tracking-tight text-white uppercase cursor-pointer" onClick={() => navigate('/home')}>
-                        BOOKMY<span className="text-[#df183a]">SHOW</span> <span className="hidden lg:inline text-xs font-medium text-gray-400 tracking-normal normal-case border-l border-gray-600 pl-2 ml-1">Admin Portal</span>
-                    </p>
+
                 </div>
 
-                {/* Clean Actions layout context container */}
-                <div className="flex items-center gap-2 md:gap-4">
-                    <span className="hidden sm:inline text-xs font-bold bg-[#333a50] text-[#df183a] px-3 py-1 rounded-full uppercase tracking-wider border border-[#df183a]/20">
-                        Super Admin
-                    </span>
-
+                <div className="flex items-center gap-4">
+                    <button onClick={handleLogout} className="flex items-center gap-2 border border-gray-600 text-gray-300 text-xs font-bold rounded-lg px-4 py-2 hover:bg-[#f84464] hover:text-white hover:border-[#f84464] transition-all">
+                        <LogOut size={14} /> Logout
+                    </button>
                 </div>
             </nav>
 

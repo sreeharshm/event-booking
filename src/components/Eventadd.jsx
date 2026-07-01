@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { addEvent, BASE_URLs, editEvent, getAllEvent, removeEvent } from "../api/Allapi";
-import { Plus, Trash2, Edit3, Calendar, Users, X, Eye, Ticket, LogOut, Upload, Menu} from "lucide-react";
+import { Plus, Trash2, Edit3, Calendar, Users, X, Eye, Ticket, LogOut, Upload, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function Eventadd() {
@@ -121,7 +121,7 @@ function Eventadd() {
             {/* Sidebar */}
             <aside className={`fixed  left-0 top-16 bottom-0 bg-[#2b3144] border-r border-gray-700/50 p-6 z-50 transition-transform duration-300 w-64 
                 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:block`}>
-            
+
                 <nav className="space-y-2">
                     <a href="/user" className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-[#1f2533] hover:text-white rounded-xl font-medium transition-all">
                         <Users size={18} /> Users
@@ -141,8 +141,8 @@ function Eventadd() {
                     <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="md:hidden text-gray-400 hover:text-white">
                         {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
                     </button>
-                    <p className="text-xl font-black tracking-wider text-white">
-                        BOOKMY<span className="text-[#f84464]">SHOW</span> <span className="text-xs font-bold bg-[#1f2533] text-gray-400 px-2 py-0.5 rounded ml-2 border border-gray-700">ADMIN</span>
+                    <p className="text-xl font-black tracking-tight text-white uppercase">
+                        EVENT<span className="text-[#df183a]">HUB</span> <span className="text-xs font-medium text-gray-400 tracking-normal normal-case border-l border-gray-600 pl-2 ml-1">Admin</span>
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
@@ -211,7 +211,11 @@ function Eventadd() {
                                     <tr key={event.id} className="hover:bg-[#1f2533]/40 transition-all">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <img src={event.image ? `${BASE_URLs}${event.image}` : "/placeholder.png"} className="w-12 h-12 rounded-xl object-cover border border-gray-700" alt="" />
+                                                <img src={
+                                                    event.image
+                                                        ? (event.image.startsWith('http') ? event.image : `${BASE_URLs}${event.image}`)
+                                                        : "https://via.placeholder.com/400x600"
+                                                } className="w-12 h-12 rounded-xl object-cover border border-gray-700" alt="" />
                                                 <div>
                                                     <p className="text-sm font-bold text-white mb-0.5">{event.title}</p>
                                                     <div className="flex items-center gap-2">
