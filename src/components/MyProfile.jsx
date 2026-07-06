@@ -83,7 +83,6 @@ function MyProfile() {
             </nav>
 
             {/* --- CORE CONTENT LAYOUT --- */}
-            {/* --- CORE CONTENT LAYOUT --- */}
             <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 md:py-8">
                 {/* Back Button */}
                 <button

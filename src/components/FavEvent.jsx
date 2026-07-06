@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getFavEvent, removeFavEvent, curretUser, BASE_URLs } from '../api/Allapi';
-import { Heart, LogOut, Search, X, Calendar, User, ArrowLeft, Loader2, BookOpen, ShieldCheck } from 'lucide-react';
+import { Heart, LogOut, Search, X, Calendar, User, ArrowLeft, Loader2, Menu, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function FavEvent() {
@@ -9,12 +9,16 @@ function FavEvent() {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
 
+    // --- Sidebar Toggle State ---
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
     // --- Search States ---
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredResults, setFilteredResults] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
     const searchRef = useRef(null);
+    const sidebarRef = useRef(null);
     const navigate = useNavigate();
 
     // 1. Initial Data Fetch
@@ -45,11 +49,14 @@ function FavEvent() {
         return () => clearTimeout(delay);
     }, [searchQuery, favorites]);
 
-    // 3. Close dropdown when clicking outside
+    // 3. Close dropdown & toggle-sidebar when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (searchRef.current && !searchRef.current.contains(event.target)) {
                 setIsDropdownOpen(false);
+            }
+            if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+                setIsSidebarOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -110,7 +117,7 @@ function FavEvent() {
     );
 
     return (
-        <div className="min-h-screen bg-[#f5f5f5] text-gray-800 font-sans">
+        <div className="min-h-screen bg-[#f5f5f5] text-gray-800 font-sans relative overflow-x-hidden">
             {/* --- BOOKMYSHOW NAVBAR --- */}
             <nav className="bg-[#333545] text-white sticky top-0 z-50 px-4 py-3 shadow-md">
                 <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
@@ -172,14 +179,18 @@ function FavEvent() {
                         )}
                     </div>
                     
-                    {/* Minimalist Profile Indicator */}
-                    <div className="flex items-center gap-3 bg-[#43465e] px-4 py-1.5 rounded-full border border-gray-600/40 shrink-0">
+                    {/* Minimalist Profile Indicator / Toggle Controller */}
+                    <div 
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                        className="flex items-center gap-3 bg-[#43465e] px-4 py-1.5 rounded-full border border-gray-600/40 shrink-0 cursor-pointer hover:bg-[#4d506b] transition-colors"
+                    >
                         <div className="w-7 h-7 bg-rose-500 rounded-full flex items-center justify-center text-xs font-bold uppercase text-white shadow-inner">
                             {user?.username?.charAt(0) || <User size={12} />}
                         </div>
                         <span className="text-xs font-semibold tracking-wide hidden sm:inline text-gray-200">
                             Hi, {user?.username || "Guest"}
                         </span>
+                        <Menu size={14} className="text-gray-300 ml-1" />
                     </div>
                 </div>
             </nav>
@@ -194,41 +205,58 @@ function FavEvent() {
                     <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" /> Back to Discover
                 </button>
 
-                <div className="flex flex-col md:flex-row gap-8 items-start">
+                <div className="flex flex-col md:flex-row gap-8 items-start relative">
                     
-                    {/* --- LEFT SIDEBAR PANEL --- */}
-                    <aside className="w-full md:w-72 bg-white rounded-2xl border border-gray-200/60 shadow-sm overflow-hidden sticky md:top-24">
-                        <div className="p-6 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100 flex flex-col items-center text-center">
-                            <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 font-black text-2xl uppercase border-2 border-white shadow-md mb-3">
-                                {user?.username?.charAt(0)}
-                            </div>
-                            <h3 className="font-bold text-gray-900 text-base">{user?.username || "Guest User"}</h3>
-                            <p className="text-xs text-gray-400 mt-0.5 truncate max-w-[200px]">{user?.email}</p>
-                        </div>
-                        
-                        <div className="p-3 space-y-0.5">
-                           <button onClick={() => navigate('/myprofile')} className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3.5 rounded-xl transition-all">
-                                <User size={16} className="text-gray-400" /> Account & Profile
-                            </button>
-                            
-                            <button className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-rose-600 bg-rose-50 px-4 py-3.5 rounded-xl">
-                                <Heart size={16} className="fill-rose-500 text-rose-500" /> Saved Favorites
-                            </button>
-                            
-                            <button onClick={() => navigate('/mybooking')} className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3.5 rounded-xl transition-all">
-                                <ShieldCheck size={16} className="text-gray-400" /> Purchase History
-                            </button>
-                            
-                            <div className="pt-4 mt-2 border-t border-gray-100">
-                                <button
-                                    onClick={handleLogout}
-                                    className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-500 hover:text-red-600 hover:bg-red-50/50 px-4 py-3.5 rounded-xl transition-all"
-                                >
-                                    <LogOut size={16} /> Sign Out
-                                </button>
-                            </div>
-                        </div>
-                    </aside>
+                    {/* --- TOGGLEABLE SIDEBAR PANEL (Near Profile Context Layout) --- */}
+                    <AnimatePresence>
+                        {isSidebarOpen && (
+                            <motion.aside 
+                                ref={sidebarRef}
+                                initial={{ opacity: 0, x: 50, y: -20 }}
+                                animate={{ opacity: 1, x: 0, y: 0 }}
+                                exit={{ opacity: 0, x: 50, y: -20 }}
+                                transition={{ duration: 0.2, ease: "easeOut" }}
+                                className="w-72 bg-white rounded-2xl border border-gray-200 shadow-xl overflow-hidden absolute right-0 top-0 z-40"
+                            >
+                                <div className="p-6 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100 flex flex-col items-center text-center relative">
+                                    <button 
+                                        onClick={() => setIsSidebarOpen(false)}
+                                        className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                    <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 font-black text-2xl uppercase border-2 border-white shadow-md mb-3">
+                                        {user?.username?.charAt(0)}
+                                    </div>
+                                    <h3 className="font-bold text-gray-900 text-base">{user?.username || "Guest User"}</h3>
+                                    <p className="text-xs text-gray-400 mt-0.5 truncate max-w-[200px]">{user?.email}</p>
+                                </div>
+                                
+                                <div className="p-3 space-y-0.5">
+                                   <button onClick={() => { navigate('/myprofile'); setIsSidebarOpen(false); }} className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3.5 rounded-xl transition-all">
+                                        <User size={16} className="text-gray-400" /> Account & Profile
+                                    </button>
+                                    
+                                    <button className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-rose-600 bg-rose-50 px-4 py-3.5 rounded-xl">
+                                        <Heart size={16} className="fill-rose-500 text-rose-500" /> Saved Favorites
+                                    </button>
+                                    
+                                    <button onClick={() => { navigate('/mybooking'); setIsSidebarOpen(false); }} className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3.5 rounded-xl transition-all">
+                                        <ShieldCheck size={16} className="text-gray-400" /> Purchase History
+                                    </button>
+                                    
+                                    <div className="pt-4 mt-2 border-t border-gray-100">
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-500 hover:text-red-600 hover:bg-red-50/50 px-4 py-3.5 rounded-xl transition-all"
+                                        >
+                                            <LogOut size={16} /> Sign Out
+                                        </button>
+                                    </div>
+                                </div>
+                            </motion.aside>
+                        )}
+                    </AnimatePresence>
 
                     {/* --- MAIN ACCOUNT DASHBOARD --- */}
                     <main className="flex-1 w-full bg-white rounded-2xl shadow-sm border border-gray-200/60 overflow-hidden">
