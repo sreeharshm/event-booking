@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const BASE_URLs = "http://127.0.0.1:8000"; 
+export const BASE_URLs = "https://event-booking-backend-qfmh.onrender.com"; 
 
 
 const authHeader = () => {
