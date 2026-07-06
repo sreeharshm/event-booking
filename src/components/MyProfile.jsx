@@ -83,41 +83,45 @@ function MyProfile() {
             </nav>
 
             {/* --- CORE CONTENT LAYOUT --- */}
-            <div className="max-w-6xl mx-auto px-4 py-8">
+            {/* --- CORE CONTENT LAYOUT --- */}
+            <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 md:py-8">
                 {/* Back Button */}
                 <button
                     onClick={() => navigate(-1)}
-                    className="flex items-center gap-2 text-gray-500 font-bold text-xs mb-6 hover:text-rose-500 transition-colors group uppercase tracking-wider"
+                    className="flex items-center gap-2 text-gray-500 font-bold text-xs mb-5 md:mb-6 hover:text-rose-500 transition-colors group uppercase tracking-wider"
                 >
                     <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" /> Back to Discover
                 </button>
 
-                <div className="flex flex-col md:flex-row gap-8 items-start">
+                {/* Changed items-start to items-stretch for cohesive height alignment */}
+                <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-stretch">
 
-                    {/* --- LEFT SIDEBAR PANEL --- */}
-                    <aside className="w-full md:w-72 bg-white rounded-2xl border border-gray-200/60 shadow-sm overflow-hidden sticky md:top-24">
-                        <div className="p-6 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100 flex flex-col items-center text-center">
-                            <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 font-black text-2xl uppercase border-2 border-white shadow-md mb-3">
+                    {/* --- LEFT SIDEBAR / MOBILE TOP PANEL --- */}
+                    {/* Removed sticky on mobile, refined padding behavior */}
+                    <aside className="w-full md:w-72 bg-white rounded-2xl border border-gray-200/60 shadow-sm overflow-hidden md:sticky md:top-24 self-start">
+                        {/* Flex row on mobile, stacks back to column on desktop */}
+                        <div className="p-4 sm:p-6 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100 flex flex-row md:flex-col items-center gap-4 md:gap-0 text-left md:text-center">
+                            <div className="w-12 h-12 md:w-16 md:h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 font-black text-lg md:text-2xl uppercase border-2 border-white shadow-sm md:mb-3 shrink-0">
                                 {user?.username?.charAt(0)}
                             </div>
-                            <h3 className="font-bold text-gray-900 text-base">{user?.username}</h3>
-                            <p className="text-xs text-gray-400 mt-0.5 truncate max-w-[200px]">{user?.email}</p>
+                            <div className="min-w-0 flex-1 md:flex-initial">
+                                <h3 className="font-bold text-gray-900 text-sm md:text-base truncate">{user?.username}</h3>
+                                <p className="text-xs text-gray-400 mt-0.5 truncate max-w-[180px] sm:max-w-none">{user?.email}</p>
+                            </div>
                         </div>
 
-                        <div className="p-3 space-y-0.5">
-                            <button className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-rose-600 bg-rose-50 px-4 py-3.5 rounded-xl">
-                                <User size={16} /> Account & Profile
+                        {/* Navigation options: Flex wrap rows on mobile, list stack on desktop */}
+                        <div className="p-2 sm:p-3 flex flex-row md:flex-col flex-wrap gap-1 md:space-y-0.5 border-t border-gray-50 md:border-t-0">
+                            <button className="flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-3.5 text-center md:text-left text-[11px] md:text-xs font-bold text-rose-600 bg-rose-50 px-3 md:px-4 py-2.5 md:py-3.5 rounded-xl whitespace-nowrap">
+                                <User size={14} className="shrink-0" /> <span className="hidden xs:inline">Account</span>
                             </button>
-                             <button onClick={() => navigate('/fav')} className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3.5 rounded-xl transition-all">
-                                <Heart size={16} /> Saved Favorites
+                            <button onClick={() => navigate('/fav')} className="flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-3.5 text-center md:text-left text-[11px] md:text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-3 md:px-4 py-2.5 md:py-3.5 rounded-xl transition-all whitespace-nowrap">
+                                <Heart size={14} className="shrink-0" /> <span className="hidden xs:inline">Favorites</span>
                             </button>
-
-                            <button onClick={() => navigate('/mybooking')} className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3.5 rounded-xl transition-all">
-                                <ShieldCheck size={16} className="text-gray-400" /> Purchase History
+                            <button onClick={() => navigate('/mybooking')} className="flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-3.5 text-center md:text-left text-[11px] md:text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-3 md:px-4 py-2.5 md:py-3.5 rounded-xl transition-all whitespace-nowrap">
+                                <ShieldCheck size={14} className="shrink-0 text-gray-400" /> <span className="hidden xs:inline">History</span>
                             </button>
-                            
-
-                            <div className="pt-4 mt-2 border-t border-gray-100">
+                            <div className="w-full md:w-auto md:pt-4 md:mt-2 md:border-t md:border-gray-100 hidden md:block">
                                 <button
                                     onClick={handleLogout}
                                     className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-500 hover:text-red-600 hover:bg-red-50/50 px-4 py-3.5 rounded-xl transition-all"
@@ -131,30 +135,29 @@ function MyProfile() {
                     {/* --- MAIN ACCOUNT DASHBOARD --- */}
                     <main className="flex-1 w-full bg-white rounded-2xl shadow-sm border border-gray-200/60 overflow-hidden">
                         {/* Section Header */}
-                        <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/50">
+                        <div className="px-4 sm:px-6 py-4 md:py-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/50">
                             <div>
-                                <h2 className="text-lg font-black text-gray-900 tracking-tight">Account Details</h2>
-                                <p className="text-xs text-gray-400 mt-0.5">Manage your personal profile and communications preferences.</p>
+                                <h2 className="text-base md:text-lg font-black text-gray-900 tracking-tight">Account Details</h2>
+                                <p className="text-[11px] md:text-xs text-gray-400 mt-0.5">Manage your personal profile details.</p>
                             </div>
                             <button
-                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm whitespace-nowrap w-full sm:w-auto justify-center ${isUpdating ? 'bg-gray-100 text-gray-400' : 'bg-rose-600 text-white hover:bg-rose-700'
-                                    }`}
+                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm whitespace-nowrap w-full sm:w-auto justify-center ${isUpdating ? 'bg-gray-100 text-gray-400' : 'bg-rose-600 text-white hover:bg-rose-700'}`}
                                 onClick={handleEdit}
                                 disabled={isUpdating}
                             >
                                 {isUpdating ? <Loader2 className="animate-spin" size={14} /> : <Edit3 size={14} />}
-                                {isUpdating ? "Saving Changes..." : "Save Changes"}
+                                {isUpdating ? "Saving..." : "Save Changes"}
                             </button>
                         </div>
 
                         {/* Information Grid Container */}
-                        <div className="p-6 sm:p-8 space-y-8">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                                 {/* Username Input Card */}
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Full Name / Username</label>
-                                    <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus-within:bg-white focus-within:border-rose-400 focus-within:shadow-sm transition-all">
-                                        <User size={16} className="text-gray-400" />
+                                    <label className="text-[10px] md:text-[11px] font-bold text-gray-400 uppercase tracking-wider">Full Name / Username</label>
+                                    <div className="flex items-center gap-3 px-3.5 py-2.5 md:px-4 md:py-3 bg-gray-50 border border-gray-200 rounded-xl focus-within:bg-white focus-within:border-rose-400 focus-within:shadow-sm transition-all">
+                                        <User size={16} className="text-gray-400 shrink-0" />
                                         <input
                                             type="text"
                                             value={user?.username || ""}
@@ -167,9 +170,9 @@ function MyProfile() {
 
                                 {/* Email Input Card */}
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Email Address</label>
-                                    <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus-within:bg-white focus-within:border-rose-400 focus-within:shadow-sm transition-all">
-                                        <Mail size={16} className="text-gray-400" />
+                                    <label className="text-[10px] md:text-[11px] font-bold text-gray-400 uppercase tracking-wider">Email Address</label>
+                                    <div className="flex items-center gap-3 px-3.5 py-2.5 md:px-4 md:py-3 bg-gray-50 border border-gray-200 rounded-xl focus-within:bg-white focus-within:border-rose-400 focus-within:shadow-sm transition-all">
+                                        <Mail size={16} className="text-gray-400 shrink-0" />
                                         <input
                                             type="email"
                                             value={user?.email || ""}
@@ -182,9 +185,9 @@ function MyProfile() {
 
                                 {/* Phone Input Card */}
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Mobile Number</label>
-                                    <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus-within:bg-white focus-within:border-rose-400 focus-within:shadow-sm transition-all">
-                                        <Phone size={16} className="text-gray-400" />
+                                    <label className="text-[10px] md:text-[11px] font-bold text-gray-400 uppercase tracking-wider">Mobile Number</label>
+                                    <div className="flex items-center gap-3 px-3.5 py-2.5 md:px-4 md:py-3 bg-gray-50 border border-gray-200 rounded-xl focus-within:bg-white focus-within:border-rose-400 focus-within:shadow-sm transition-all">
+                                        <Phone size={16} className="text-gray-400 shrink-0" />
                                         <input
                                             type="text"
                                             value={user?.ph_number || ""}
@@ -197,37 +200,32 @@ function MyProfile() {
 
                                 {/* Static Verified Type Container */}
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Verification Status</label>
-                                    <div className="flex items-center justify-between px-4 py-3 bg-emerald-50/60 border border-emerald-100 rounded-xl">
-                                        <div className="flex items-center gap-2.5 text-emerald-800 font-bold text-xs">
-                                            <ShieldCheck size={16} className="text-emerald-600" /> Verified BookMyShow Member
+                                    <label className="text-[10px] md:text-[11px] font-bold text-gray-400 uppercase tracking-wider">Verification Status</label>
+                                    <div className="flex items-center justify-between px-3.5 py-2.5 md:px-4 md:py-3 bg-emerald-50/60 border border-emerald-100 rounded-xl">
+                                        <div className="flex flex-wrap items-center gap-2 text-emerald-800 font-bold text-xs">
+                                            <ShieldCheck size={16} className="text-emerald-600 shrink-0" /> Verified Member
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* --- ACTIVITY SUMMARY QUICK METRICS --- */}
-                            <div className="pt-6 border-t border-gray-100">
-                                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">Your Booking Snapshot</h4>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                        <span className="text-2xl font-black text-gray-900">08</span>
-                                        <p className="text-[10px] font-bold text-gray-400 uppercase mt-0.5">Attended Shows</p>
+                            <div className="pt-5 md:pt-6 border-t border-gray-100">
+                                <h4 className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 md:mb-4">Your Booking Snapshot</h4>
+                                <div className="grid grid-cols-2 gap-3 md:gap-4">
+                                    <div className="bg-gray-50 p-3.5 md:p-4 rounded-xl border border-gray-100">
+                                        <span className="text-xl md:text-2xl font-black text-gray-900">08</span>
+                                        <p className="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase mt-0.5">Attended Shows</p>
                                     </div>
-                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                        <span className="text-2xl font-black text-rose-600">02</span>
-                                        <p className="text-[10px] font-bold text-gray-400 uppercase mt-0.5">Active Tickets</p>
+                                    <div className="bg-gray-50 p-3.5 md:p-4 rounded-xl border border-gray-100">
+                                        <span className="text-xl md:text-2xl font-black text-rose-600">02</span>
+                                        <p className="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase mt-0.5">Active Tickets</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </main>
-
                 </div>
-
-                <footer className="text-center mt-12 text-gray-400 text-xs font-medium">
-                    Secure checkout backend active. Need assistance? <span className="text-rose-500 cursor-pointer hover:underline font-semibold">Contact Support</span>
-                </footer>
             </div>
         </div>
     );
