@@ -95,7 +95,6 @@ function MyProfile() {
                 {/* Changed items-start to items-stretch for cohesive height alignment */}
                 <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-stretch">
 
-                    {/* --- LEFT SIDEBAR / MOBILE TOP PANEL --- */}
                     {/* Removed sticky on mobile, refined padding behavior */}
                     <aside className="w-full md:w-72 bg-white rounded-2xl border border-gray-200/60 shadow-sm overflow-hidden md:sticky md:top-24 self-start">
                         {/* Flex row on mobile, stacks back to column on desktop */}
