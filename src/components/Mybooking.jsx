@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllBoking, BASE_URLs, downloadTicket, curretUser } from '../api/Allapi';
-import { Loader2, Calendar, MapPin, Ticket, Search, X, LogOut, Download, ArrowLeft, ShieldCheck, User, Heart } from 'lucide-react';
+import { Loader2, Calendar, MapPin, Ticket, Search, X, LogOut, Download, ArrowLeft, ShieldCheck, User, Heart, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 function Mybooking() {
@@ -8,6 +8,7 @@ function Mybooking() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
+    const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 768);
 
     const navigate = useNavigate();
 
@@ -18,6 +19,16 @@ function Mybooking() {
             return;
         }
 
+        const handleResize = () => {
+            if (window.innerWidth >= 768) {
+                setSidebarOpen(true);
+            } else {
+                setSidebarOpen(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+
         Promise.all([curretUser(), getAllBoking()])
             .then(([userRes, bookingRes]) => {
                 const userData = Array.isArray(userRes.data) ? userRes.data[0] : userRes.data;
@@ -27,8 +38,10 @@ function Mybooking() {
             })
             .catch(err => {
                 console.error("Data fetching failed:", err);
-                Loading(false);
+                setLoading(false);
             });
+
+        return () => window.removeEventListener('resize', handleResize);
     }, [navigate]);
 
     const handleDownload = async (id) => {
@@ -65,19 +78,19 @@ function Mybooking() {
     );
 
     return (
-        <div className="min-h-screen bg-[#f5f5f5] text-gray-800 font-sans">
-            {/* --- NAVBAR --- */}
-            <nav className="bg-[#333545] text-white sticky top-0 z-50 px-4 py-3 shadow-md">
+        <div className="min-h-screen bg-[#f8f9fa] text-gray-800 font-sans">
+            {/* --- EVENTHUB NAVBAR --- */}
+            <nav className="bg-[#1f2533] text-white sticky top-0 z-50 px-4 py-3 shadow-md">
                 <div className="max-w-6xl mx-auto flex items-center justify-between">
-                    {/* Logo Branding */}
+                    {/* Logo */}
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
                         <p className="text-white text-2xl font-black tracking-tight">
                             event<span className="text-rose-500">hub</span>
                         </p>
                     </div>
 
-                    {/* Minimalist Profile Indicator */}
-                    <div className="flex items-center gap-3 bg-[#43465e] px-4 py-1.5 rounded-full border border-gray-600/40">
+                    {/* Profile Badge */}
+                    <div className="flex items-center gap-3 bg-[#2f364a] px-4 py-1.5 rounded-full border border-gray-700">
                         <div className="w-7 h-7 bg-rose-500 rounded-full flex items-center justify-center text-xs font-bold uppercase text-white shadow-inner">
                             {user?.username?.charAt(0) || <User size={12} />}
                         </div>
@@ -88,62 +101,103 @@ function Mybooking() {
                 </div>
             </nav>
 
-            {/* --- CORE CONTENT LAYOUT --- */}
-            <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 md:py-8">
-                {/* Back Button */}
-                <button
-                    onClick={() => navigate(-1)}
-                    className="flex items-center gap-2 text-gray-500 font-bold text-xs mb-5 md:mb-6 hover:text-rose-500 transition-colors group uppercase tracking-wider"
-                >
-                    <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" /> Back to Discover
-                </button>
+            {/* --- MAIN PAGE WRAPPER --- */}
+            <div className="max-w-6xl mx-auto px-4 py-6">
+                
+                {/* Control Bar */}
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setSidebarOpen(!sidebarOpen)}
+                            className="p-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-colors shadow-sm"
+                            aria-label="Toggle Sidebar"
+                        >
+                            {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
+                        </button>
 
-                {/* FIXED TYPO HERE (claqssName -> className) */}
-                <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-stretch">
+                        <button
+                            onClick={() => navigate('/home')}
+                            className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-rose-600 transition-colors"
+                        >
+                            <ArrowLeft size={16} />
+                            Back to Discover
+                        </button>
+                    </div>
+                </div>
 
-                    {/* --- LEFT SIDEBAR PANEL (Now beautifully responsive on mobile!) --- */}
-                    <aside className="w-full md:w-72 bg-white rounded-2xl border border-gray-200/60 shadow-sm overflow-hidden md:sticky md:top-24 self-start">
-                        <div className="p-4 sm:p-6 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100 flex flex-row md:flex-col items-center gap-4 md:gap-0 text-left md:text-center">
-                            <div className="w-12 h-12 md:w-16 md:h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 font-black text-lg md:text-2xl uppercase border-2 border-white shadow-sm md:mb-3 shrink-0">
+                {/* Dashboard Flex Container */}
+                <div className="flex gap-6 relative items-start">
+                    
+                    {/* --- RESPONSIVE SIDEBAR --- */}
+                    <aside
+                        className={`
+                            fixed md:sticky top-0 md:top-24 left-0 z-40 h-screen md:h-auto bg-white border-r md:border border-gray-200 
+                            shadow-xl md:shadow-sm md:rounded-2xl overflow-hidden transition-all duration-300 ease-in-out
+                            ${sidebarOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full md:w-20 md:translate-x-0"}
+                        `}
+                    >
+                        {/* Avatar Details Header */}
+                        <div className="p-5 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100 flex flex-col items-center text-center">
+                            <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 font-black text-2xl uppercase border-2 border-white shadow-sm mb-3 shrink-0">
                                 {user?.username?.charAt(0) || <User size={20} />}
                             </div>
-                            <div className="min-w-0 flex-1 md:flex-initial">
-                                <h3 className="font-bold text-gray-900 text-sm md:text-base truncate">{user?.username || "Guest"}</h3>
-                                <p className="text-xs text-gray-400 mt-0.5 truncate max-w-[180px] sm:max-w-none">{user?.email || ""}</p>
-                            </div>
+                            
+                            {sidebarOpen && (
+                                <div className="w-full truncate">
+                                    <h3 className="font-bold text-gray-800 truncate">{user?.username || "Guest"}</h3>
+                                    <p className="text-xs text-gray-400 truncate">{user?.email || ""}</p>
+                                </div>
+                            )}
                         </div>
 
-                        <div className="p-2 sm:p-3 flex flex-row md:flex-col flex-wrap gap-1 md:space-y-0.5 border-t border-gray-50 md:border-t-0">
-                            <button onClick={() => navigate('/myprofile')} className="flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-3.5 text-center md:text-left text-[11px] md:text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-3 md:px-4 py-2.5 md:py-3.5 rounded-xl transition-all whitespace-nowrap">
-                                <User size={14} className="shrink-0 text-gray-400" /> <span className="hidden xs:inline">Account</span>
+                        {/* Navigation Options */}
+                        <div className="p-3 space-y-1">
+                            <button onClick={() => navigate('/myprofile')} className="w-full flex items-center gap-3 text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3 rounded-xl transition-all">
+                                <User size={18} className="shrink-0 text-gray-400" />
+                                {sidebarOpen && <span>Account Details</span>}
                             </button>
-                            <button onClick={() => navigate('/fav')} className="flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-3.5 text-center md:text-left text-[11px] md:text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-3 md:px-4 py-2.5 md:py-3.5 rounded-xl transition-all whitespace-nowrap">
-                                <Heart size={14} className="shrink-0" /> <span className="hidden xs:inline">Favorites</span>
+
+                            <button onClick={() => navigate('/fav')} className="w-full flex items-center gap-3 text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3 rounded-xl transition-all">
+                                <Heart size={18} className="shrink-0" />
+                                {sidebarOpen && <span>My Favourites</span>}
                             </button>
-                            <button className="flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-3.5 text-center md:text-left text-[11px] md:text-xs font-bold text-rose-600 bg-rose-50 px-3 md:px-4 py-2.5 md:py-3.5 rounded-xl whitespace-nowrap">
-                                <ShieldCheck size={14} className="shrink-0" /> <span className="hidden xs:inline">History</span>
+
+                            <button className="w-full flex items-center gap-3 text-xs font-bold text-rose-600 bg-rose-50/80 px-4 py-3 rounded-xl transition-all">
+                                <ShieldCheck size={18} className="shrink-0" />
+                                {sidebarOpen && <span>Booking History</span>}
                             </button>
-                            <div className="w-full md:w-auto md:pt-4 md:mt-2 md:border-t md:border-gray-100 hidden md:block">
-                                <button
-                                    onClick={handleLogout}
-                                    className="w-full flex items-center gap-3.5 text-left text-xs font-bold text-gray-500 hover:text-red-600 hover:bg-red-50/50 px-4 py-3.5 rounded-xl transition-all"
-                                >
-                                    <LogOut size={16} /> Sign Out
-                                </button>
-                            </div>
+
+                            {/* Divider Line */}
+                            <div className="h-[1px] bg-gray-100 my-2" />
+
+                            <button
+                                onClick={handleLogout}
+                                className="w-full flex items-center gap-3 text-xs font-bold text-gray-500 hover:text-red-600 hover:bg-red-50/50 px-4 py-3 rounded-xl transition-all"
+                            >
+                                <LogOut size={18} className="shrink-0" />
+                                {sidebarOpen && <span>Log Out</span>}
+                            </button>
                         </div>
                     </aside>
 
-                    {/* --- MAIN ACCOUNT DASHBOARD --- */}
+                    {/* Mobile Dim Overlay */}
+                    {sidebarOpen && (
+                        <div
+                            onClick={() => setSidebarOpen(false)}
+                            className="fixed inset-0 bg-black/45 z-30 md:hidden"
+                        />
+                    )}
+
+                    {/* --- MAIN CONTENT CARD --- */}
                     <main className="flex-1 w-full bg-white rounded-2xl shadow-sm border border-gray-200/60 overflow-hidden">
                         {/* Section Header */}
-                        <div className="px-4 sm:px-6 py-4 md:py-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/50">
+                        <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/50">
                             <div>
-                                <h2 className="text-base md:text-lg font-black text-gray-900 tracking-tight">My Bookings</h2>
-                                <p className="text-[11px] md:text-xs text-gray-400 mt-0.5">Manage your tickets and download gate passes.</p>
+                                <h2 className="text-lg font-black text-gray-900 tracking-tight">My Bookings</h2>
+                                <p className="text-xs text-gray-400 mt-0.5">Manage your tickets and download gate passes.</p>
                             </div>
 
-                            {/* Search Bar Input Tool */}
+                            {/* Search Bar Input */}
                             <div className="relative w-full sm:w-64">
                                 <div className="flex items-center bg-white border border-gray-200 rounded-xl px-3 py-2 focus-within:border-rose-400 focus-within:shadow-sm transition-all">
                                     <Search size={14} className="text-gray-400 mr-2 shrink-0" />
@@ -166,12 +220,12 @@ function Mybooking() {
                         </div>
 
                         {/* Ticket List Area */}
-                        <div className="p-4 sm:p-6 md:p-8 space-y-4">
+                        <div className="p-6 md:p-8 space-y-4">
                             {filteredBookings.length === 0 ? (
-                                <div className="text-center py-12 md:py-16 border-2 border-dashed border-gray-100 rounded-2xl">
+                                <div className="text-center py-16 border-2 border-dashed border-gray-100 rounded-2xl">
                                     <Ticket className="mx-auto text-gray-300 mb-3" size={40} />
                                     <p className="text-sm text-gray-500 font-medium px-4">No bookings match your search parameters.</p>
-                                    <button onClick={() => navigate('/event')} className="mt-2 text-rose-500 text-xs font-bold hover:underline">
+                                    <button onClick={() => navigate('/home')} className="mt-2 text-rose-500 text-xs font-bold hover:underline">
                                         Browse Active Events
                                     </button>
                                 </div>
@@ -182,24 +236,24 @@ function Mybooking() {
                                             key={booking.id}
                                             className="group bg-white rounded-2xl border border-gray-200/70 overflow-hidden flex flex-col sm:flex-row hover:border-rose-200 hover:shadow-sm transition-all duration-200"
                                         >
-                                            {/* Left Ticket Image Block */}
+                                            {/* Left Ticket Image */}
                                             <div className="w-full sm:w-40 h-36 sm:h-auto bg-gray-100 overflow-hidden relative shrink-0">
                                                 <img
                                                     src={`${BASE_URLs}${booking.event?.image}`}
-                                                    alt="event location display"
-                                                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
+                                                    alt="event showcase"
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                                     onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }}
                                                 />
                                             </div>
 
-                                            {/* Right Content details Block */}
-                                            <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-4">
+                                            {/* Right Details Block */}
+                                            <div className="p-5 flex-1 flex flex-col justify-between gap-4">
                                                 <div>
                                                     <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
-                                                        <h3 className="text-sm md:text-base font-bold text-gray-900 group-hover:text-rose-600 transition-colors line-clamp-1">
+                                                        <h3 className="text-base font-bold text-gray-900 group-hover:text-rose-600 transition-colors line-clamp-1">
                                                             {booking.event?.title || "Event Title"}
                                                         </h3>
-                                                        <span className="bg-emerald-50 text-emerald-700 text-[9px] md:text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap">
+                                                        <span className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap">
                                                             Confirmed
                                                         </span>
                                                     </div>
@@ -220,7 +274,7 @@ function Mybooking() {
                                                     </div>
                                                 </div>
 
-                                                {/* Action Download Items Footer */}
+                                                {/* Action Panel */}
                                                 <div className="flex items-center justify-end pt-3 border-t border-gray-100/80">
                                                     <button
                                                         onClick={() => handleDownload(booking.id)}

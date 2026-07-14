@@ -19,6 +19,9 @@ function Events() {
 
     const [sideModal, setSideModal] = useState(false);
 
+    const userString = localStorage.getItem("user");
+    const user = userString ? JSON.parse(userString) : { username: "Guest" };
+
     // 1. Initial Data Fetch
     useEffect(() => {
         fetchEvents();
@@ -114,46 +117,8 @@ function Events() {
                             book<span className="text-[#f84464]">my</span>show
                         </p>
                     </div>
+
                 </div>
-
-                {sidebar && (
-                    <div
-                        className='fixed inset-0 bg-black/50 z-50 backdrop-blur-sm'
-                        onClick={() => setSideBar(false)}
-                    >
-                        <div
-                            className='fixed left-0 top-0 h-screen bg-[#333545] w-56 p-6 shadow-2xl flex flex-col justify-between animate-in slide-in-from-left duration-300 ease-out transform translate-x-0'
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <div className="space-y-6">
-                                <div className="flex items-center justify-between pb-4 border-b border-gray-700">
-                                    <p className="text-white text-xl font-black tracking-tight">
-                                        book<span className="text-[#f84464]">my</span>show
-                                    </p>
-                                    <X
-                                        size={20}
-                                        className="text-gray-400 cursor-pointer hover:text-[#f84464]"
-                                        onClick={() => setSideBar(false)}
-                                    />
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <button onClick={() => { navigate('/home'); setSideBar(false); }} className="text-left text-sm font-medium text-gray-200 hover:text-white hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all">Home</button>
-                                    <button onClick={() => { navigate('/event'); setSideBar(false); }} className="text-left text-sm font-bold text-white bg-[#f84464] px-4 py-2.5 rounded-lg">Events</button>
-                                    <button onClick={() => { navigate('/mybooking'); setSideBar(false); }} className="text-left text-sm font-medium text-gray-200 hover:text-white hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all">My Booking</button>
-                                    <button onClick={() => { navigate('/myprofile'); setSideBar(false); }} className="text-left text-sm font-medium text-gray-200 hover:text-white hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all">My Profile</button>
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={handleLogout}
-                                className="flex items-center justify-center gap-2 text-white text-sm font-bold bg-[#f84464] hover:bg-[#f84464]/90 w-full py-3 rounded-lg transition-all shadow-md mt-auto"
-                            >
-                                <LogOut size={16} /> Logout
-                            </button>
-                        </div>
-                    </div>
-                )}
 
                 {/* Search Bar Wrapper */}
                 <div className="relative flex items-center h-10 flex-1 max-w-[200px] sm:max-w-xs md:max-w-md bg-white rounded-md px-3 border border-gray-200 shadow-inner" ref={searchRef}>
@@ -210,6 +175,15 @@ function Events() {
                     <button className="text-sm font-bold text-white border-b-2 border-[#f84464] pb-1">Events</button>
                     <button className="text-xs font-medium text-gray-300 hover:text-white transition-colors">About</button>
 
+                    <div className="flex items-center gap-3 bg-[#43465e] px-4 py-1.5 rounded-full border border-gray-600/40">
+                        <div className="w-7 h-7 bg-rose-500 rounded-full flex items-center justify-center text-xs font-bold uppercase text-white shadow-inner">
+                            {user?.username?.charAt(0) || <User size={12} />}
+                        </div>
+                        <span className="text-xs font-semibold tracking-wide hidden sm:inline text-gray-200">
+                            {user?.username || "Guest"}
+                        </span>
+                    </div>
+
                     <Menu
                         size={20}
                         className='cursor-pointer text-gray-300 hover:text-white transition-colors'
@@ -217,6 +191,46 @@ function Events() {
                     />
                 </div>
             </nav>
+
+            {sidebar && (
+                <div
+                    className='fixed inset-0 bg-black/50 z-50 backdrop-blur-sm'
+                    onClick={() => setSideBar(false)}
+                >
+                    <div
+                        className='fixed left-0 top-0 h-screen bg-[#333545] w-56 p-6 shadow-2xl flex flex-col justify-between animate-in slide-in-from-left duration-300 ease-out transform translate-x-0'
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between pb-4 border-b border-gray-700">
+                                <p className="text-white text-xl font-black tracking-tight">
+                                    book<span className="text-[#f84464]">my</span>show
+                                </p>
+                                <X
+                                    size={20}
+                                    className="text-gray-400 cursor-pointer hover:text-[#f84464]"
+                                    onClick={() => setSideBar(false)}
+                                />
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <button onClick={() => { navigate('/home'); setSideBar(false); }} className="text-left text-sm font-medium text-gray-200 hover:text-white hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all">Home</button>
+                                <button onClick={() => { navigate('/event'); setSideBar(false); }} className="text-left text-sm font-bold text-white bg-[#f84464] px-4 py-2.5 rounded-lg">Events</button>
+                                <button onClick={() => { navigate('/mybooking'); setSideBar(false); }} className="text-left text-sm font-medium text-gray-200 hover:text-white hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all">My Booking</button>
+                                <button onClick={() => { navigate('/myprofile'); setSideBar(false); }} className="text-left text-sm font-medium text-gray-200 hover:text-white hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all">My Profile</button>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center justify-center gap-2 text-white text-sm font-bold bg-[#f84464] hover:bg-[#f84464]/90 w-full py-3 rounded-lg transition-all shadow-md mt-auto"
+                        >
+                            <LogOut size={16} /> Logout
+                        </button>
+                    </div>
+                </div>
+            )}
+
 
             {sideModal && (
                 <div

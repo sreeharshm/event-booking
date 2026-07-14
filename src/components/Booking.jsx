@@ -142,6 +142,8 @@ function Booking() {
                     <button onClick={() => navigate('/home')} className="text-xs font-medium text-gray-300 hover:text-white transition-colors">Home</button>
                     <button onClick={() => navigate('/event')} className="text-xs font-medium text-gray-300 hover:text-white transition-colors">Events</button>
                     <button className="text-xs font-medium text-gray-300 hover:text-white transition-colors">About</button>
+
+
                     <Menu
                         size={20}
                         className='cursor-pointer text-gray-300 hover:text-white transition-colors'

@@ -243,12 +243,12 @@ function Home() {
                     onClick={() => setSideBar(false)}
                 >
                     <div
-                        className='fixed left-0 top-0 h-screen bg-white w-56 p-6 shadow-2xl flex flex-col justify-between transition-transform duration-300'
+                        className='fixed left-0 top-0 h-screen bg-[#333545]  w-56 p-6 shadow-2xl flex flex-col justify-between transition-transform duration-300'
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="space-y-6">
                             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-                                <p className="text-gray-900 text-xl font-black tracking-tight">
+                                <p className="text-white text-xl font-black tracking-tight">
                                     event<span className="text-rose-500">hub</span>
                                 </p>
                                 <X
@@ -259,10 +259,10 @@ function Home() {
                             </div>
 
                             <div className="flex flex-col gap-2">
-                                <button className="text-left text-xs font-bold text-rose-600 bg-rose-50 px-4 py-3 rounded-lg">Home</button>
-                                <button onClick={() => { navigate('/event'); setSideBar(false); }} className="text-left text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-gray-50 px-4 py-3 rounded-lg transition-all">Live Events</button>
-                                <button onClick={() => { navigate('/mybooking'); setSideBar(false); }} className="text-left text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-gray-50 px-4 py-3 rounded-lg transition-all">Your Bookings</button>
-                                <button onClick={() => { navigate('/myprofile'); setSideBar(false); }} className="text-left text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-gray-50 px-4 py-3 rounded-lg transition-all">Account Settings</button>
+                                <button className="text-left text-xs font-bold text-white bg-[#f84464] px-4 py-3 rounded-lg">Home</button>
+                                <button onClick={() => { navigate('/event'); setSideBar(false); }} className="text-left text-xs font-bold text-white hover:text-rose-600 hover:bg-gray-50 px-4 py-3 rounded-lg transition-all">Live Events</button>
+                                <button onClick={() => { navigate('/mybooking'); setSideBar(false); }} className="text-left text-xs font-bold text-white hover:text-rose-600 hover:bg-gray-50 px-4 py-3 rounded-lg transition-all">Your Bookings</button>
+                                <button onClick={() => { navigate('/myprofile'); setSideBar(false); }} className="text-left text-xs font-bold text-white hover:text-rose-600 hover:bg-gray-50 px-4 py-3 rounded-lg transition-all">Account Settings</button>
                             </div>
                         </div>
 
