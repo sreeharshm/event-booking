@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { addEvent, BASE_URLs, editEvent, getAllEvent, removeEvent } from "../api/Allapi";
 import { Plus, Trash2, Edit3, Calendar, Users, X, Eye, Ticket, LogOut, Upload, Menu } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Eventadd() {
     const [eventData, setEventData] = useState({
@@ -123,15 +123,15 @@ function Eventadd() {
                 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:block`}>
 
                 <nav className="space-y-2">
-                    <a href="/user" className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-[#1f2533] hover:text-white rounded-xl font-medium transition-all">
+                    <Link to="/user" className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-[#1f2533] hover:text-white rounded-xl font-medium transition-all">
                         <Users size={18} /> Users
-                    </a>
+                    </Link>
                     <button className="w-full flex items-center gap-3 px-4 py-3 bg-[#f84464] text-white rounded-xl font-bold transition-all shadow-lg shadow-[#f84464]/20">
                         <Calendar size={18} /> Events List
                     </button>
-                    <a href="/allbooking" className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-[#1f2533] hover:text-white rounded-xl font-medium transition-all">
+                    <Link to="/allbooking" className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-[#1f2533] hover:text-white rounded-xl font-medium transition-all">
                         <Ticket size={18} /> All Bookings
-                    </a>
+                    </Link>
                 </nav>
             </aside>
 
