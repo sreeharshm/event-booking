@@ -152,11 +152,7 @@ function Events() {
                                     className={`px-4 py-3 cursor-pointer border-b border-gray-100 flex items-center gap-3 transition-colors ${index === activeIndex ? "bg-gray-100" : "hover:bg-gray-50"}`}
                                 >
                                     <img
-                                        src={
-                                            item.image
-                                                ? (item.image.startsWith('http') ? item.image : `${BASE_URLs}${item.image}`)
-                                                : "https://via.placeholder.com/40"
-                                        }
+                                        src={item.image || "https://via.placeholder.com/40"}
                                         alt=""
                                         className="w-8 h-8 rounded object-cover"
                                     />
@@ -294,7 +290,7 @@ function Events() {
                             .filter(ev => ev.title?.toLowerCase().includes(searchQuery.toLowerCase()))
                             .map((event) => {
                                 console.log("IMAGE URL:", event.image);
-                                
+
                                 return (
 
                                     <div
@@ -304,11 +300,7 @@ function Events() {
                                     >
                                         <div className="relative aspect-[2/3] md:aspect-[3/4] rounded-xl overflow-hidden w-full bg-gray-200 shadow-sm border border-gray-100">
                                             <img
-                                                src={
-                                                    event.image
-                                                        ? (event.image.startsWith('http') ? event.image : `${BASE_URLs}${event.image}`)
-                                                        : "https://via.placeholder.com/400x600"
-                                                }
+                                                src={event.image || "https://via.placeholder.com/400x600"}
                                                 alt={event.title}
                                                 className="w-full h-full object-cover transition-transform duration-300"
                                             />
