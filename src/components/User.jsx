@@ -49,12 +49,12 @@ function User() {
                     <button className="w-full flex items-center gap-3 px-4 py-3 bg-[#df183a] text-white rounded-xl font-bold shadow-md shadow-[#df183a]/20 transition-all">
                         <Users size={20} /> Users
                     </button>
-                    <a href="/eventadd" className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-[#333a50] hover:text-white rounded-xl font-bold transition-all">
+                    <Link to="/eventadd" className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-[#333a50] hover:text-white rounded-xl font-bold transition-all">
                         <Calendar size={20} /> Events List
-                    </a>
-                    <a href="/allbooking" className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-[#333a50] hover:text-white rounded-xl font-bold transition-all">
+                    </Link>
+                    <Link to="/allbooking" className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-[#333a50] hover:text-white rounded-xl font-bold transition-all">
                         <Ticket size={20} /> All Bookings
-                    </a>
+                    </Link>
                 </nav>
             </aside>
 
