@@ -210,7 +210,7 @@ function FavEvent() {
                         </div>
 
                         {isDropdownOpen && filteredResults.length > 0 && (
-                        <div className="absolute top-12 left-0 w-full bg-white rounded-xl shadow-xl  overflow-hidden">
+                            <div className="absolute top-12 left-0 w-full bg-white rounded-xl shadow-xl  overflow-hidden">
 
                                 {filteredResults.map((item) => {
                                     const event = item.event || item;
@@ -503,9 +503,10 @@ function FavEvent() {
                                                     <div className="relative">
 
                                                         <img
-                                                            src={`${BASE_URLs}${event.image}`}
+                                                            src={event.image || "https://via.placeholder.com/400x600"}
+                                                            alt={event.title}
                                                             className="h-52 w-full object-cover"
-                                                            alt=""
+
                                                         />
 
                                                         <motion.button

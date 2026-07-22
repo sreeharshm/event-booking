@@ -103,7 +103,7 @@ function Mybooking() {
 
             {/* --- MAIN PAGE WRAPPER --- */}
             <div className="max-w-6xl mx-auto px-4 py-6">
-                
+
                 {/* Control Bar */}
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
@@ -127,7 +127,7 @@ function Mybooking() {
 
                 {/* Dashboard Flex Container */}
                 <div className="flex gap-6 relative items-start">
-                    
+
                     {/* --- RESPONSIVE SIDEBAR --- */}
                     <aside
                         className={`
@@ -141,7 +141,7 @@ function Mybooking() {
                             <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 font-black text-2xl uppercase border-2 border-white shadow-sm mb-3 shrink-0">
                                 {user?.username?.charAt(0) || <User size={20} />}
                             </div>
-                            
+
                             {sidebarOpen && (
                                 <div className="w-full truncate">
                                     <h3 className="font-bold text-gray-800 truncate">{user?.username || "Guest"}</h3>
@@ -239,8 +239,8 @@ function Mybooking() {
                                             {/* Left Ticket Image */}
                                             <div className="w-full sm:w-40 h-36 sm:h-auto bg-gray-100 overflow-hidden relative shrink-0">
                                                 <img
-                                                    src={`${BASE_URLs}${booking.event?.image}`}
-                                                    alt="event showcase"
+                                                    src={event.image || "https://via.placeholder.com/400x600"}
+                                                    alt={event.title}
                                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                                     onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }}
                                                 />
