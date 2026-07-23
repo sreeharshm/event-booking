@@ -200,8 +200,16 @@ function Booking() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a1c22] via-[#1a1c22]/80 to-transparent" />
                 <div className="relative max-w-7xl mx-auto w-full px-4 md:px-12 flex flex-col md:flex-row gap-8 items-end pb-10 z-10">
                     <div className="hidden md:block w-56 h-[280px] rounded-xl overflow-hidden shadow-2xl border border-gray-800 bg-gray-900 flex-shrink-0">
-                        <img src={image || "https://via.placeholder.com/400x600"}
-                            alt={title} className="w-full h-full object-cover" />
+                        <img
+                            src={image || "https://via.placeholder.com/400x600"}
+                            alt={title}
+                            onError={(e) => {
+                                // If Cloudinary returns 404 or fails, swap to fallback image
+                                e.currentTarget.onerror = null; // Prevents infinite loops
+                                e.currentTarget.src = "https://via.placeholder.com/400x600";
+                            }}
+                            className="w-full h-full object-cover transition-transform duration-300"
+                        />
                     </div>
                     <div className="text-white space-y-4 w-full">
                         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white transition-colors">
