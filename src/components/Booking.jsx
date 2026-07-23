@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { eventBookingList, eventBooking, BASE_URLs } from '../api/Allapi';
-import { MapPin, Calendar, Ticket, ArrowLeft, Loader2, X, CreditCard, ShieldCheck, CheckCircle2, Minus, Plus, Search, Menu, TextAlignJustify, User, Heart, BookOpen, LogOut } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin, Calendar, Ticket, ArrowLeft, Loader2, X, CreditCard, ShieldCheck, CheckCircle2, Minus, Plus, Menu, TextAlignJustify, User, Heart, BookOpen, LogOut } from 'lucide-react';
 
 function Booking() {
     const { id } = useParams();
@@ -14,10 +13,9 @@ function Booking() {
     const [paymentStep, setPaymentStep] = useState('summary');
     const [quantity, setQuantity] = useState(1);
 
-    // --- Navigation & Menu States matching Events page ---
+    // --- Navigation & Menu States ---
     const [sidebar, setSideBar] = useState(false);
     const [sideModal, setSideModal] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         if (id) {
@@ -73,7 +71,7 @@ function Booking() {
         ? (event.image.startsWith('http')
             ? event.image
             : `${BASE_URLs}${event.image}`)
-        : "https://via.placeholder.com/400x300";
+        : "https://via.placeholder.com/400x600";
 
     if (loading) return (
         <div className="h-screen flex justify-center items-center bg-[#f5f5fa]">
@@ -141,9 +139,7 @@ function Booking() {
                 <div className="hidden md:flex items-center gap-6">
                     <button onClick={() => navigate('/home')} className="text-xs font-medium text-gray-300 hover:text-white transition-colors">Home</button>
                     <button onClick={() => navigate('/event')} className="text-xs font-medium text-gray-300 hover:text-white transition-colors">Events</button>
-                    <button className="text-xs font-medium text-gray-300 hover:text-white transition-colors">About</button>
-
-
+                    
                     <Menu
                         size={20}
                         className='cursor-pointer text-gray-300 hover:text-white transition-colors'
@@ -201,11 +197,10 @@ function Booking() {
                 <div className="relative max-w-7xl mx-auto w-full px-4 md:px-12 flex flex-col md:flex-row gap-8 items-end pb-10 z-10">
                     <div className="hidden md:block w-56 h-[280px] rounded-xl overflow-hidden shadow-2xl border border-gray-800 bg-gray-900 flex-shrink-0">
                         <img
-                            src={image || "https://via.placeholder.com/400x600"}
-                            alt={title}
+                            src={imageUrl}
+                            alt={event?.title || "Event Image"}
                             onError={(e) => {
-                                // If Cloudinary returns 404 or fails, swap to fallback image
-                                e.currentTarget.onerror = null; // Prevents infinite loops
+                                e.currentTarget.onerror = null;
                                 e.currentTarget.src = "https://via.placeholder.com/400x600";
                             }}
                             className="w-full h-full object-cover transition-transform duration-300"

@@ -98,9 +98,25 @@ function Eventadd() {
         }
     };
 
-    const handleRemove = (id) => {
-        if (window.confirm("Are you sure you want to delete this event?")) {
-            removeEvent(id).then(() => fetchEvent());
+    const handleRemove = async (id) => {
+        if (!window.confirm("Are you sure?")) return;
+
+        try {
+            const res = await removeEvent(id);
+
+            alert("Delete Success");
+            console.log(res);
+
+            fetchEvent();
+        } catch (err) {
+            console.log(err);
+            console.log(err.response);
+
+            alert(
+                err.response?.status +
+                " : " +
+                JSON.stringify(err.response?.data)
+            );
         }
     };
 

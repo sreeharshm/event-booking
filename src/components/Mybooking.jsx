@@ -12,6 +12,16 @@ function Mybooking() {
 
     const navigate = useNavigate();
 
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return "https://via.placeholder.com/400x600";
+        if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+            return imagePath;
+        }
+        const baseUrl = BASE_URLs?.endsWith("/") ? BASE_URLs.slice(0, -1) : BASE_URLs;
+        const path = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+        return `${baseUrl}${path}`;
+    };
+
     useEffect(() => {
         const token = localStorage.getItem("access");
         if (!token) {
@@ -66,6 +76,13 @@ function Mybooking() {
         navigate('/login');
     };
 
+    const handleMobileNavigate = (path) => {
+        if (window.innerWidth < 768) {
+            setSidebarOpen(false);
+        }
+        navigate(path);
+    };
+
     const filteredBookings = bookings.filter(b =>
         b.event?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         b.event?.location?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -82,14 +99,12 @@ function Mybooking() {
             {/* --- EVENTHUB NAVBAR --- */}
             <nav className="bg-[#1f2533] text-white sticky top-0 z-50 px-4 py-3 shadow-md">
                 <div className="max-w-6xl mx-auto flex items-center justify-between">
-                    {/* Logo */}
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
                         <p className="text-white text-2xl font-black tracking-tight">
                             event<span className="text-rose-500">hub</span>
                         </p>
                     </div>
 
-                    {/* Profile Badge */}
                     <div className="flex items-center gap-3 bg-[#2f364a] px-4 py-1.5 rounded-full border border-gray-700">
                         <div className="w-7 h-7 bg-rose-500 rounded-full flex items-center justify-center text-xs font-bold uppercase text-white shadow-inner">
                             {user?.username?.charAt(0) || <User size={12} />}
@@ -103,8 +118,6 @@ function Mybooking() {
 
             {/* --- MAIN PAGE WRAPPER --- */}
             <div className="max-w-6xl mx-auto px-4 py-6">
-
-                {/* Control Bar */}
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
                         <button
@@ -125,10 +138,8 @@ function Mybooking() {
                     </div>
                 </div>
 
-                {/* Dashboard Flex Container */}
                 <div className="flex gap-6 relative items-start">
-
-                    {/* --- RESPONSIVE SIDEBAR --- */}
+                    {/* --- SIDEBAR --- */}
                     <aside
                         className={`
                             fixed md:sticky top-0 md:top-24 left-0 z-40 h-screen md:h-auto bg-white border-r md:border border-gray-200 
@@ -136,7 +147,6 @@ function Mybooking() {
                             ${sidebarOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full md:w-20 md:translate-x-0"}
                         `}
                     >
-                        {/* Avatar Details Header */}
                         <div className="p-5 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100 flex flex-col items-center text-center">
                             <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 font-black text-2xl uppercase border-2 border-white shadow-sm mb-3 shrink-0">
                                 {user?.username?.charAt(0) || <User size={20} />}
@@ -150,14 +160,13 @@ function Mybooking() {
                             )}
                         </div>
 
-                        {/* Navigation Options */}
                         <div className="p-3 space-y-1">
-                            <button onClick={() => navigate('/myprofile')} className="w-full flex items-center gap-3 text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3 rounded-xl transition-all">
+                            <button onClick={() => handleMobileNavigate('/myprofile')} className="w-full flex items-center gap-3 text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3 rounded-xl transition-all">
                                 <User size={18} className="shrink-0 text-gray-400" />
                                 {sidebarOpen && <span>Account Details</span>}
                             </button>
 
-                            <button onClick={() => navigate('/fav')} className="w-full flex items-center gap-3 text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3 rounded-xl transition-all">
+                            <button onClick={() => handleMobileNavigate('/fav')} className="w-full flex items-center gap-3 text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50/40 px-4 py-3 rounded-xl transition-all">
                                 <Heart size={18} className="shrink-0" />
                                 {sidebarOpen && <span>My Favourites</span>}
                             </button>
@@ -167,7 +176,6 @@ function Mybooking() {
                                 {sidebarOpen && <span>Booking History</span>}
                             </button>
 
-                            {/* Divider Line */}
                             <div className="h-[1px] bg-gray-100 my-2" />
 
                             <button
@@ -180,7 +188,6 @@ function Mybooking() {
                         </div>
                     </aside>
 
-                    {/* Mobile Dim Overlay */}
                     {sidebarOpen && (
                         <div
                             onClick={() => setSidebarOpen(false)}
@@ -188,16 +195,14 @@ function Mybooking() {
                         />
                     )}
 
-                    {/* --- MAIN CONTENT CARD --- */}
+                    {/* --- MAIN CONTENT --- */}
                     <main className="flex-1 w-full bg-white rounded-2xl shadow-sm border border-gray-200/60 overflow-hidden">
-                        {/* Section Header */}
                         <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/50">
                             <div>
                                 <h2 className="text-lg font-black text-gray-900 tracking-tight">My Bookings</h2>
                                 <p className="text-xs text-gray-400 mt-0.5">Manage your tickets and download gate passes.</p>
                             </div>
 
-                            {/* Search Bar Input */}
                             <div className="relative w-full sm:w-64">
                                 <div className="flex items-center bg-white border border-gray-200 rounded-xl px-3 py-2 focus-within:border-rose-400 focus-within:shadow-sm transition-all">
                                     <Search size={14} className="text-gray-400 mr-2 shrink-0" />
@@ -219,7 +224,6 @@ function Mybooking() {
                             </div>
                         </div>
 
-                        {/* Ticket List Area */}
                         <div className="p-6 md:p-8 space-y-4">
                             {filteredBookings.length === 0 ? (
                                 <div className="text-center py-16 border-2 border-dashed border-gray-100 rounded-2xl">
@@ -236,21 +240,18 @@ function Mybooking() {
                                             key={booking.id}
                                             className="group bg-white rounded-2xl border border-gray-200/70 overflow-hidden flex flex-col sm:flex-row hover:border-rose-200 hover:shadow-sm transition-all duration-200"
                                         >
-                                            {/* Left Ticket Image */}
                                             <div className="w-full sm:w-40 h-36 sm:h-auto bg-gray-100 overflow-hidden relative shrink-0">
                                                 <img
-                                                src={booking.image || "https://via.placeholder.com/400x600"}
-                                                alt={booking.title}
-                                                onError={(e) => {
-                                                    // If Cloudinary returns 404 or fails, swap to fallback image
-                                                    e.currentTarget.onerror = null; // Prevents infinite loops
-                                                    e.currentTarget.src = "https://via.placeholder.com/400x600";
-                                                }}
-                                                className="w-full h-full object-cover transition-transform duration-300"
-                                            />
+                                                    src={getImageUrl(booking.event?.image || booking.image)}
+                                                    alt={booking.event?.title || "Ticket"}
+                                                    onError={(e) => {
+                                                        e.currentTarget.onerror = null;
+                                                        e.currentTarget.src = "https://via.placeholder.com/400x600";
+                                                    }}
+                                                    className="w-full h-full object-cover transition-transform duration-300"
+                                                />
                                             </div>
 
-                                            {/* Right Details Block */}
                                             <div className="p-5 flex-1 flex flex-col justify-between gap-4">
                                                 <div>
                                                     <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
@@ -278,7 +279,6 @@ function Mybooking() {
                                                     </div>
                                                 </div>
 
-                                                {/* Action Panel */}
                                                 <div className="flex items-center justify-end pt-3 border-t border-gray-100/80">
                                                     <button
                                                         onClick={() => handleDownload(booking.id)}
