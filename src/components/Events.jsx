@@ -302,6 +302,11 @@ function Events() {
                                             <img
                                                 src={event.image || "https://via.placeholder.com/400x600"}
                                                 alt={event.title}
+                                                onError={(e) => {
+                                                    // If Cloudinary returns 404 or fails, swap to fallback image
+                                                    e.currentTarget.onerror = null; // Prevents infinite loops
+                                                    e.currentTarget.src = "https://via.placeholder.com/400x600";
+                                                }}
                                                 className="w-full h-full object-cover transition-transform duration-300"
                                             />
 
