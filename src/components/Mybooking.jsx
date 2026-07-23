@@ -239,8 +239,8 @@ function Mybooking() {
                                             {/* Left Ticket Image */}
                                             <div className="w-full sm:w-40 h-36 sm:h-auto bg-gray-100 overflow-hidden relative shrink-0">
                                                 <img
-                                                    src={event.image || "https://via.placeholder.com/400x600"}
-                                                    alt={event.title}
+                                                    src={booking.image || "https://via.placeholder.com/400x600"}
+                                                    alt={booking.title}
                                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                                     onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }}
                                                 />
