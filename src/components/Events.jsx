@@ -108,10 +108,6 @@ function Events() {
             {/* --- NAVBAR START --- */}
             <nav className="fixed bg-[#333545] top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-12 shadow-md">
                 <div className="flex items-center gap-4">
-                    <TextAlignJustify
-                        onClick={() => setSideBar(true)}
-                        className='md:hidden cursor-pointer text-white'
-                    />
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
                         <p className="text-white text-xl md:text-2xl font-black tracking-tight font-sans">
                             book<span className="text-[#f84464]">my</span>show
@@ -187,45 +183,6 @@ function Events() {
                     />
                 </div>
             </nav>
-
-            {sidebar && (
-                <div
-                    className='fixed inset-0 bg-black/50 z-50 backdrop-blur-sm'
-                    onClick={() => setSideBar(false)}
-                >
-                    <div
-                        className='fixed left-0 top-0 h-screen bg-[#333545] w-56 p-6 shadow-2xl flex flex-col justify-between animate-in slide-in-from-left duration-300 ease-out transform translate-x-0'
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <div className="space-y-6">
-                            <div className="flex items-center justify-between pb-4 border-b border-gray-700">
-                                <p className="text-white text-xl font-black tracking-tight">
-                                    book<span className="text-[#f84464]">my</span>show
-                                </p>
-                                <X
-                                    size={20}
-                                    className="text-gray-400 cursor-pointer hover:text-[#f84464]"
-                                    onClick={() => setSideBar(false)}
-                                />
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <button onClick={() => { navigate('/home'); setSideBar(false); }} className="text-left text-sm font-medium text-gray-200 hover:text-white hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all">Home</button>
-                                <button onClick={() => { navigate('/event'); setSideBar(false); }} className="text-left text-sm font-bold text-white bg-[#f84464] px-4 py-2.5 rounded-lg">Events</button>
-                                <button onClick={() => { navigate('/mybooking'); setSideBar(false); }} className="text-left text-sm font-medium text-gray-200 hover:text-white hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all">My Booking</button>
-                                <button onClick={() => { navigate('/myprofile'); setSideBar(false); }} className="text-left text-sm font-medium text-gray-200 hover:text-white hover:bg-white/10 px-4 py-2.5 rounded-lg transition-all">My Profile</button>
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={handleLogout}
-                            className="flex items-center justify-center gap-2 text-white text-sm font-bold bg-[#f84464] hover:bg-[#f84464]/90 w-full py-3 rounded-lg transition-all shadow-md mt-auto"
-                        >
-                            <LogOut size={16} /> Logout
-                        </button>
-                    </div>
-                </div>
-            )}
 
 
             {sideModal && (

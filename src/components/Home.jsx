@@ -104,10 +104,6 @@ function Home() {
             {/* --- PREMIUM BOOKMYSHOW NAVBAR --- */}
             <nav className="fixed bg-[#333545] text-white top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-12 shadow-md">
                 <div className="flex items-center gap-4">
-                    <TextAlignJustify
-                        onClick={() => setSideBar(true)}
-                        className='md:hidden cursor-pointer text-gray-200 w-6 h-6 hover:text-rose-500 transition-colors'
-                    />
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
                         <p className="text-white text-xl md:text-2xl font-black tracking-tight">
                             event<span className="text-rose-500">hub</span>
@@ -237,45 +233,6 @@ function Home() {
                 </div>
             </nav>
 
-            {/* --- MOBILE DRAWER NAVIGATION --- */}
-            {sideBar && (
-                <div
-                    className='fixed inset-0 bg-black/40 z-50 backdrop-blur-xs'
-                    onClick={() => setSideBar(false)}
-                >
-                    <div
-                        className='fixed left-0 top-0 h-screen bg-[#333545] w-56 p-6 shadow-2xl flex flex-col justify-between transition-transform duration-300'
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <div className="space-y-6">
-                            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-                                <p className="text-white text-xl font-black tracking-tight">
-                                    event<span className="text-rose-500">hub</span>
-                                </p>
-                                <X
-                                    size={20}
-                                    className="text-gray-400 cursor-pointer hover:text-rose-500"
-                                    onClick={() => setSideBar(false)}
-                                />
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <button className="text-left text-xs font-bold text-white bg-[#f84464] px-4 py-3 rounded-lg">Home</button>
-                                <button onClick={() => { navigate('/event'); setSideBar(false); }} className="text-left text-xs font-bold text-white hover:text-rose-600 hover:bg-gray-50 px-4 py-3 rounded-lg transition-all">Live Events</button>
-                                <button onClick={() => { navigate('/mybooking'); setSideBar(false); }} className="text-left text-xs font-bold text-white hover:text-rose-600 hover:bg-gray-50 px-4 py-3 rounded-lg transition-all">Your Bookings</button>
-                                <button onClick={() => { navigate('/myprofile'); setSideBar(false); }} className="text-left text-xs font-bold text-white hover:text-rose-600 hover:bg-gray-50 px-4 py-3 rounded-lg transition-all">Account Settings</button>
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={handleLogout}
-                            className="flex items-center justify-center gap-2 text-white text-xs font-bold bg-rose-600 hover:bg-rose-700 w-full py-3 rounded-lg transition-all shadow"
-                        >
-                            <LogOut size={14} /> Sign Out
-                        </button>
-                    </div>
-                </div>
-            )}
 
             {/* --- DESKTOP RIGHT DRAWER MODAL --- */}
             {sideModal && (
