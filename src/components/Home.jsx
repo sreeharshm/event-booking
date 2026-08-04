@@ -13,8 +13,6 @@ function Home() {
     const userString = localStorage.getItem("user");
     const user = userString ? JSON.parse(userString) : { username: "Guest" };
 
-    const [sideBar, setSideBar] = useState(false);
-
     // --- Search & Data States ---
     const [events, setEvents] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
