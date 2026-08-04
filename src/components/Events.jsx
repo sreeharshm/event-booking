@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { addFavEvent, getAllEvent, BASE_URLs } from '../api/Allapi';
-import { Heart, LogOut, Search, X, Calendar, TextAlignJustify, Menu, User, BookOpen, HomeIcon, Ticket, User } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { addFavEvent, getAllEvent } from '../api/Allapi';
+import { Heart, LogOut, Search, X, Calendar, Menu, User, BookOpen, HomeIcon, Ticket } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function Events() {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [sidebar, setSideBar] = useState(false);
 
     // --- Search States ---
     const [searchQuery, setSearchQuery] = useState("");
@@ -15,7 +14,9 @@ function Events() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
     const searchRef = useRef(null);
+
     const navigate = useNavigate();
+    const location = useLocation(); // Fixed: declared useLocation
 
     const [sideModal, setSideModal] = useState(false);
 
@@ -27,7 +28,7 @@ function Events() {
         fetchEvents();
     }, []);
 
-    // 2. Search Logic matching Mybooking & Home
+    // 2. Search Logic
     useEffect(() => {
         const delay = setTimeout(() => {
             if (searchQuery.trim() === "") {
@@ -113,7 +114,6 @@ function Events() {
                             book<span className="text-[#f84464]">my</span>show
                         </p>
                     </div>
-
                 </div>
 
                 {/* Search Bar Wrapper */}
@@ -184,7 +184,6 @@ function Events() {
                 </div>
             </nav>
 
-
             {sideModal && (
                 <div
                     className='inset-0 fixed bg-black/40 z-50 backdrop-blur-xs animate-in fade-in duration-200'
@@ -245,95 +244,88 @@ function Events() {
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                         {events
                             .filter(ev => ev.title?.toLowerCase().includes(searchQuery.toLowerCase()))
-                            .map((event) => {
-                                console.log("IMAGE URL:", event.image);
+                            .map((event) => (
+                                <div
+                                    key={event.id}
+                                    onClick={() => navigate(`/booking/${event.id}`)}
+                                    className="group bg-transparent overflow-hidden transition-all duration-300 cursor-pointer flex flex-col justify-between"
+                                >
+                                    <div className="relative aspect-[2/3] md:aspect-[3/4] rounded-xl overflow-hidden w-full bg-gray-200 shadow-sm border border-gray-100">
+                                        <img
+                                            src={event.image || "https://via.placeholder.com/400x600"}
+                                            alt={event.title}
+                                            onError={(e) => {
+                                                e.currentTarget.onerror = null;
+                                                e.currentTarget.src = "https://via.placeholder.com/400x600";
+                                            }}
+                                            className="w-full h-full object-cover transition-transform duration-300"
+                                        />
 
-                                return (
-
-                                    <div
-                                        key={event.id}
-                                        onClick={() => navigate(`/booking/${event.id}`)}
-                                        className="group bg-transparent overflow-hidden transition-all duration-300 cursor-pointer flex flex-col justify-between"
-                                    >
-                                        <div className="relative aspect-[2/3] md:aspect-[3/4] rounded-xl overflow-hidden w-full bg-gray-200 shadow-sm border border-gray-100">
-                                            <img
-                                                src={event.image || "https://via.placeholder.com/400x600"}
-                                                alt={event.title}
-                                                onError={(e) => {
-                                                    // If Cloudinary returns 404 or fails, swap to fallback image
-                                                    e.currentTarget.onerror = null; // Prevents infinite loops
-                                                    e.currentTarget.src = "https://via.placeholder.com/400x600";
-                                                }}
-                                                className="w-full h-full object-cover transition-transform duration-300"
-                                            />
-
-                                            <motion.button
-                                                whileHover={{ scale: 1.1 }}
-                                                whileTap={{ scale: 0.9 }}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleFavEvent(event.id);
-                                                }}
-                                                className="absolute top-2 right-2 p-2 bg-black/40 backdrop-blur-md rounded-full transition-colors shadow-sm z-10"
-                                            >
-                                                <AnimatePresence mode="wait">
-                                                    <motion.div
-                                                        key={event.is_favorite ? "fav" : "unfav"}
-                                                        initial={{ scale: 0 }}
-                                                        animate={{ scale: [0, 1.2, 1] }}
-                                                        transition={{ duration: 0.2 }}
-                                                    >
-                                                        <Heart
-                                                            size={16}
-                                                            className={`transition-colors ${event.is_favorite ? "text-[#f84464] fill-[#f84464]" : "text-white"}`}
-                                                        />
-                                                    </motion.div>
-                                                </AnimatePresence>
-                                            </motion.button>
-
-                                            {/* Bottom Overlay Info Banner */}
-                                            <div className="absolute bottom-0 left-0 w-full bg-black/70 backdrop-blur-xs text-white px-3 py-1.5 text-xs md:text-sm font-medium flex justify-between items-center">
-                                                <span>₹{event.price} onwards</span>
-                                                <span className={`text-[10px] md:text-xs font-bold ${event.capacity <= 5 ? "text-orange-400" : "text-emerald-400"}`}>
-                                                    {event.capacity === 0 ? "Sold Out" : `${event.capacity} seats left`}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {/* Text Info Section styled exactly like BookMyShow's minimal card titles */}
-                                        <div className="pt-3 pb-2 px-1 flex-1 flex flex-col justify-between gap-1">
-                                            <div>
-                                                <h3 className="text-sm md:text-base font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-[#f84464] transition-colors">
-                                                    {event.title}
-                                                </h3>
-
-                                                <p className="text-xs text-gray-500 font-medium mt-1 truncate">
-                                                    {event.location}
-                                                </p>
-                                            </div>
-
-                                            <div className="flex items-center gap-1.5 text-gray-400 text-xs pt-1">
-                                                <Calendar size={13} className="text-gray-400" />
-                                                <span className="truncate">{new Date(event.date).toDateString()}</span>
-                                            </div>
-
-                                            <div className="pt-2">
-                                                <button
-                                                    disabled={event.capacity === 0}
-                                                    className={`w-full py-2 rounded-lg text-xs md:text-sm font-bold transition-all ${event.capacity === 0
-                                                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                                                        : "bg-[#f84464] text-white hover:bg-[#f84464]/90"
-                                                        }`}
+                                        <motion.button
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.9 }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleFavEvent(event.id);
+                                            }}
+                                            className="absolute top-2 right-2 p-2 bg-black/40 backdrop-blur-md rounded-full transition-colors shadow-sm z-10"
+                                        >
+                                            <AnimatePresence mode="wait">
+                                                <motion.div
+                                                    key={event.is_favorite ? "fav" : "unfav"}
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: [0, 1.2, 1] }}
+                                                    transition={{ duration: 0.2 }}
                                                 >
-                                                    {event.capacity === 0 ? "Sold Out" : "Book Tickets"}
-                                                </button>
-                                            </div>
+                                                    <Heart
+                                                        size={16}
+                                                        className={`transition-colors ${event.is_favorite ? "text-[#f84464] fill-[#f84464]" : "text-white"}`}
+                                                    />
+                                                </motion.div>
+                                            </AnimatePresence>
+                                        </motion.button>
+
+                                        {/* Bottom Overlay Info Banner */}
+                                        <div className="absolute bottom-0 left-0 w-full bg-black/70 backdrop-blur-xs text-white px-3 py-1.5 text-xs md:text-sm font-medium flex justify-between items-center">
+                                            <span>₹{event.price} onwards</span>
+                                            <span className={`text-[10px] md:text-xs font-bold ${event.capacity <= 5 ? "text-orange-400" : "text-emerald-400"}`}>
+                                                {event.capacity === 0 ? "Sold Out" : `${event.capacity} seats left`}
+                                            </span>
                                         </div>
                                     </div>
 
-                                );
+                                    {/* Text Info Section */}
+                                    <div className="pt-3 pb-2 px-1 flex-1 flex flex-col justify-between gap-1">
+                                        <div>
+                                            <h3 className="text-sm md:text-base font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-[#f84464] transition-colors">
+                                                {event.title}
+                                            </h3>
 
-                            })}
+                                            <p className="text-xs text-gray-500 font-medium mt-1 truncate">
+                                                {event.location}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-center gap-1.5 text-gray-400 text-xs pt-1">
+                                            <Calendar size={13} className="text-gray-400" />
+                                            <span className="truncate">{new Date(event.date).toDateString()}</span>
+                                        </div>
+
+                                        <div className="pt-2">
+                                            <button
+                                                disabled={event.capacity === 0}
+                                                className={`w-full py-2 rounded-lg text-xs md:text-sm font-bold transition-all ${
+                                                    event.capacity === 0
+                                                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                        : "bg-[#f84464] text-white hover:bg-[#f84464]/90"
+                                                }`}
+                                            >
+                                                {event.capacity === 0 ? "Sold Out" : "Book Tickets"}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                     </div>
                 )}
 
@@ -342,7 +334,9 @@ function Events() {
                         <p className="text-gray-400 italic">No live events matching your choice right now.</p>
                     </div>
                 )}
-            </div>.
+            </div>
+
+            {/* Mobile Bottom Navigation */}
             <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#333545] border-t border-gray-700/60 md:hidden px-6 py-2.5 shadow-2xl flex items-center justify-around">
                 <button
                     onClick={() => navigate('/home')}
