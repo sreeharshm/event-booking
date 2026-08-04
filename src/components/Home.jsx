@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Search, LogOut, Calendar, X, Bell, TextAlignJustify, Menu, User, Heart, BookOpen, ArrowRight } from 'lucide-react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { Search, LogOut, Calendar, X, Bell, TextAlignJustify, Menu, User, Heart, BookOpen, ArrowRight, Home as HomeIcon, Ticket } from 'lucide-react';
 import { getAllEvent, BASE_URLs } from '../api/Allapi';
 
 function Home() {
     const navigate = useNavigate();
+    const location = useLocation();
     const desktopSearchRef = useRef(null);
     const mobileSearchRef = useRef(null);
 
@@ -98,7 +99,7 @@ function Home() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-[#f5f5f5] text-gray-800 font-sans overflow-x-hidden">
+        <div className="flex flex-col min-h-screen bg-[#f5f5f5] text-gray-800 font-sans overflow-x-hidden pb-16 md:pb-0">
 
             {/* --- PREMIUM BOOKMYSHOW NAVBAR --- */}
             <nav className="fixed bg-[#333545] text-white top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-12 shadow-md">
@@ -212,10 +213,10 @@ function Home() {
 
                 {/* Desktop Menu Utilities */}
                 <div className="hidden md:flex items-center gap-6">
-                    <button  className="text-sm font-bold text-white border-b-2 border-[#f84464] pb-1">Home</button>
+                    <button className="text-sm font-bold text-white border-b-2 border-[#f84464] pb-1">Home</button>
 
                     <button onClick={() => navigate('/event')} className="text-xs font-semibold text-gray-200 hover:text-white transition-colors">Events</button>
-                    <button  className="text-xs font-semibold text-gray-200 hover:text-white transition-colors">About</button>
+                    <button className="text-xs font-semibold text-gray-200 hover:text-white transition-colors">About</button>
                     <div className="h-4 w-[1px] bg-gray-500/40" />
 
                     {/* User Profile Quick Tag */}
@@ -243,7 +244,7 @@ function Home() {
                     onClick={() => setSideBar(false)}
                 >
                     <div
-                        className='fixed left-0 top-0 h-screen bg-[#333545]  w-56 p-6 shadow-2xl flex flex-col justify-between transition-transform duration-300'
+                        className='fixed left-0 top-0 h-screen bg-[#333545] w-56 p-6 shadow-2xl flex flex-col justify-between transition-transform duration-300'
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="space-y-6">
@@ -362,6 +363,45 @@ function Home() {
             <footer className="w-full bg-[#333545] text-gray-400 py-4 text-center text-xs font-semibold border-t border-gray-700/50 mt-auto">
                 24/7 Customer Care Assistance Support Active • <span className="text-white cursor-pointer hover:underline">Help Center</span>
             </footer>
+
+            {/* --- FIXED MOBILE BOTTOM NAVIGATION BAR --- */}
+            <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#333545] border-t border-gray-700/60 md:hidden px-6 py-2.5 shadow-2xl flex items-center justify-around">
+                <button
+                    onClick={() => navigate('/home')}
+                    className={`flex flex-col items-center gap-1 transition-colors ${
+                        location.pathname === '/home' || location.pathname === '/' 
+                            ? 'text-rose-500 font-bold' 
+                            : 'text-gray-400 hover:text-gray-200 font-medium'
+                    }`}
+                >
+                    <HomeIcon size={18} />
+                    <span className="text-[10px] tracking-wide">HOME</span>
+                </button>
+
+                <button
+                    onClick={() => navigate('/event')}
+                    className={`flex flex-col items-center gap-1 transition-colors ${
+                        location.pathname === '/event' 
+                            ? 'text-rose-500 font-bold' 
+                            : 'text-gray-400 hover:text-gray-200 font-medium'
+                    }`}
+                >
+                    <Ticket size={18} />
+                    <span className="text-[10px] tracking-wide">EVENT</span>
+                </button>
+
+                <button
+                    onClick={() => navigate('/myprofile')}
+                    className={`flex flex-col items-center gap-1 transition-colors ${
+                        location.pathname === '/myprofile' 
+                            ? 'text-rose-500 font-bold' 
+                            : 'text-gray-400 hover:text-gray-200 font-medium'
+                    }`}
+                >
+                    <User size={18} />
+                    <span className="text-[10px] tracking-wide">PROFILE</span>
+                </button>
+            </nav>
         </div>
     );
 }
