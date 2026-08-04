@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addFavEvent, getAllEvent, BASE_URLs } from '../api/Allapi';
-import { Heart, LogOut, Search, X, Calendar, TextAlignJustify, Menu, User, BookOpen } from 'lucide-react';
+import { Heart, LogOut, Search, X, Calendar, TextAlignJustify, Menu, User, BookOpen, HomeIcon, Ticket, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function Events() {
@@ -342,7 +342,44 @@ function Events() {
                         <p className="text-gray-400 italic">No live events matching your choice right now.</p>
                     </div>
                 )}
-            </div>
+            </div>.
+            <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#333545] border-t border-gray-700/60 md:hidden px-6 py-2.5 shadow-2xl flex items-center justify-around">
+                <button
+                    onClick={() => navigate('/home')}
+                    className={`flex flex-col items-center gap-1 transition-colors ${
+                        location.pathname === '/home' || location.pathname === '/' 
+                            ? 'text-rose-500 font-bold' 
+                            : 'text-gray-400 hover:text-gray-200 font-medium'
+                    }`}
+                >
+                    <HomeIcon size={18} />
+                    <span className="text-[10px] tracking-wide">HOME</span>
+                </button>
+
+                <button
+                    onClick={() => navigate('/event')}
+                    className={`flex flex-col items-center gap-1 transition-colors ${
+                        location.pathname === '/event' 
+                            ? 'text-rose-500 font-bold' 
+                            : 'text-gray-400 hover:text-gray-200 font-medium'
+                    }`}
+                >
+                    <Ticket size={18} />
+                    <span className="text-[10px] tracking-wide">EVENT</span>
+                </button>
+
+                <button
+                    onClick={() => navigate('/myprofile')}
+                    className={`flex flex-col items-center gap-1 transition-colors ${
+                        location.pathname === '/myprofile' 
+                            ? 'text-rose-500 font-bold' 
+                            : 'text-gray-400 hover:text-gray-200 font-medium'
+                    }`}
+                >
+                    <User size={18} />
+                    <span className="text-[10px] tracking-wide">PROFILE</span>
+                </button>
+            </nav>
         </div>
     );
 }
