@@ -13,7 +13,7 @@ function Login() {
 
     const handleChange = (e) => {
         setLogin({ ...login, [e.target.name]: e.target.value });
-        if (error) setError(""); 
+        if (error) setError("");
     };
 
     const handleSubmit = async (e) => {
@@ -23,17 +23,17 @@ function Login() {
 
         try {
             const response = await custLogin(login);
-            const { token, user } = response.data;
 
-            // Secure storage
-            localStorage.setItem("token", token);
+            const { access, refresh, user } = response.data;
+
+            localStorage.setItem("access", access);
+            localStorage.setItem("refresh", refresh);
             localStorage.setItem("user", JSON.stringify(user));
 
-            // Redirect based on role
             if (user.is_staff) {
-                navigate('/user'); // Staff/Admin Panel
+                navigate('/user');
             } else {
-                navigate('/home'); // Event Browsing Page
+                navigate('/home');
             }
         } catch (err) {
             setError(err.response?.data?.message || "Invalid credentials. Please try again.");
@@ -129,7 +129,7 @@ function Login() {
                     </button>
 
                     <p className='text-center text-gray-500 text-xs pt-4 border-t border-gray-100 mt-6'>
-                        New to the platform? 
+                        New to the platform?
                         <Link to='/register' className='text-[#F84464] font-bold hover:underline ml-1'>
                             Register Now
                         </Link>

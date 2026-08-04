@@ -413,7 +413,7 @@ function FavEvent() {
                                     </p>
 
                                     <button
-                                        onClick={() => navigate("/home")}
+                                        onClick={() => navigate("/event")}
                                         className="mt-6 px-6 py-3 rounded-xl bg-rose-600 text-white hover:bg-rose-700"
                                     >
                                         Browse Events
