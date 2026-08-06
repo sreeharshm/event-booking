@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { curretUser, userEdit } from '../api/Allapi';
-import { 
-    User, Mail, ShieldCheck, Edit3, Loader2, LogOut, 
-    ArrowLeft, Phone, Heart, Menu, X 
-} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { User, Mail, ShieldCheck, Edit3, Loader2, LogOut, ArrowLeft, Phone, Heart, Menu, X, HomeIcon, Ticket } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom'; // Fixed: added useLocation
 
 function MyProfile() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 768);
+    
     const navigate = useNavigate();
+    const location = useLocation(); // Fixed: declared location
 
     // Dynamically handle sidebar state based on window resizing
     useEffect(() => {
@@ -75,7 +74,7 @@ function MyProfile() {
     );
 
     return (
-        <div className="min-h-screen bg-[#f8f9fa] text-gray-800 font-sans">
+        <div className="min-h-screen bg-[#f8f9fa] text-gray-800 font-sans pb-20"> {/* Fixed: added pb-20 for mobile nav */}
             {/* --- EVENTHUB NAVBAR --- */}
             <nav className="bg-[#1f2533] text-white sticky top-0 z-50 px-4 py-3 shadow-md">
                 <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -100,7 +99,7 @@ function MyProfile() {
 
             {/* --- MAIN PAGE WRAPPER --- */}
             <div className="max-w-6xl mx-auto px-4 py-6">
-                
+
                 {/* Control Bar */}
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
@@ -124,21 +123,21 @@ function MyProfile() {
 
                 {/* Dashboard Flex Container */}
                 <div className="flex gap-6 relative items-start">
-                    
+
                     {/* --- RESPONSIVE SIDEBAR --- */}
                     <aside
                         className={`
                             fixed md:sticky top-0 md:top-24 left-0 z-40 h-screen md:h-auto bg-white border-r md:border border-gray-200 
                             shadow-xl md:shadow-sm md:rounded-2xl overflow-hidden transition-all duration-300 ease-in-out
                             ${sidebarOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full md:w-20 md:translate-x-0"}
-                        `}
+                        `} // Fixed: removed sm:hidden
                     >
                         {/* Avatar Details Header */}
                         <div className="p-5 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100 flex flex-col items-center text-center">
                             <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-600 font-black text-2xl uppercase border-2 border-white shadow-sm mb-3 shrink-0">
                                 {user?.username?.charAt(0)}
                             </div>
-                            
+
                             {sidebarOpen && (
                                 <div className="w-full truncate">
                                     <h3 className="font-bold text-gray-800 truncate">{user?.username}</h3>
@@ -177,7 +176,7 @@ function MyProfile() {
                         </div>
                     </aside>
 
-                    {/* Mobile Dim Overlay overlay */}
+                    {/* Mobile Dim Overlay */}
                     {sidebarOpen && (
                         <div
                             onClick={() => setSidebarOpen(false)}
@@ -194,9 +193,8 @@ function MyProfile() {
                                 <p className="text-xs text-gray-400 mt-0.5">Manage your personal profile details.</p>
                             </div>
                             <button
-                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm w-full sm:w-auto justify-center ${
-                                    isUpdating ? 'bg-gray-100 text-gray-400' : 'bg-rose-600 text-white hover:bg-rose-700'
-                                }`}
+                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm w-full sm:w-auto justify-center ${isUpdating ? 'bg-gray-100 text-gray-400' : 'bg-rose-600 text-white hover:bg-rose-700'
+                                    }`}
                                 onClick={handleEdit}
                                 disabled={isUpdating}
                             >
@@ -258,7 +256,7 @@ function MyProfile() {
                                     <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Verification Status</label>
                                     <div className="flex items-center h-[46px] px-4 bg-emerald-50/60 border border-emerald-100 rounded-xl">
                                         <div className="flex items-center gap-2 text-emerald-800 font-bold text-xs">
-                                            <ShieldCheck size={16} className="text-emerald-600 shrink-0" /> 
+                                            <ShieldCheck size={16} className="text-emerald-600 shrink-0" />
                                             Verified Member
                                         </div>
                                     </div>
@@ -284,6 +282,42 @@ function MyProfile() {
 
                 </div>
             </div>
+
+            {/* Bottom Nav Bar */}
+            <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#333545] border-t border-gray-700/60 md:hidden px-6 py-2.5 shadow-2xl flex items-center justify-around">
+                <button
+                    onClick={() => navigate('/home')}
+                    className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === '/home' || location.pathname === '/'
+                            ? 'text-rose-500 font-bold'
+                            : 'text-gray-400 hover:text-gray-200 font-medium'
+                        }`}
+                >
+                    <HomeIcon size={18} />
+                    <span className="text-[10px] tracking-wide">HOME</span>
+                </button>
+
+                <button
+                    onClick={() => navigate('/event')}
+                    className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === '/event'
+                            ? 'text-rose-500 font-bold'
+                            : 'text-gray-400 hover:text-gray-200 font-medium'
+                        }`}
+                >
+                    <Ticket size={18} />
+                    <span className="text-[10px] tracking-wide">EVENT</span>
+                </button>
+
+                <button
+                    onClick={() => navigate('/myprofile')}
+                    className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === '/myprofile'
+                            ? 'text-rose-500 font-bold'
+                            : 'text-gray-400 hover:text-gray-200 font-medium'
+                        }`}
+                >
+                    <User size={18} />
+                    <span className="text-[10px] tracking-wide">PROFILE</span>
+                </button>
+            </nav>
         </div>
     );
 }
