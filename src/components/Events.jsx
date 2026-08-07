@@ -107,10 +107,10 @@ function Events() {
     return (
         <div className="min-h-screen bg-[#f5f5fa] pb-20 text-[#222222]">
             {/* --- NAVBAR START --- */}
-            <nav className="fixed bg-[#333545] top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-12 shadow-md">
+            <nav className="fixed bg-white top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-12 shadow-md">
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
-                        <p className="text-white text-xl md:text-2xl font-black tracking-tight font-sans">
+                        <p className="text-black text-xl md:text-2xl font-black tracking-tight font-sans">
                             book<span className="text-[#f84464]">my</span>show
                         </p>
                     </div>
@@ -337,7 +337,7 @@ function Events() {
             </div>
 
             {/* Mobile Bottom Navigation */}
-            <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#333545] border-t border-gray-700/60 md:hidden px-6 py-2.5 shadow-2xl flex items-center justify-around">
+            <nav className="fixed bg-white bottom-0 left-0 right-0 z-50 border-gray-700/60 md:hidden px-6 py-2.5 shadow-2xl flex items-center justify-around">
                 <button
                     onClick={() => navigate('/home')}
                     className={`flex flex-col items-center gap-1 transition-colors ${
@@ -346,8 +346,8 @@ function Events() {
                             : 'text-gray-400 hover:text-gray-200 font-medium'
                     }`}
                 >
-                    <HomeIcon size={18} />
-                    <span className="text-[10px] tracking-wide">HOME</span>
+                    <HomeIcon strokeWidth={3}  size={18} className='text-gray-400' />
+                    <span className="text-[10px] tracking-wide">Home</span>
                 </button>
 
                 <button
@@ -358,8 +358,8 @@ function Events() {
                             : 'text-gray-400 hover:text-gray-200 font-medium'
                     }`}
                 >
-                    <Ticket size={18} />
-                    <span className="text-[10px] tracking-wide">EVENT</span>
+                    <Ticket strokeWidth={3} size={18} />
+                    <span className="text-[10px] tracking-wide">Event</span>
                 </button>
 
                 <button
@@ -370,8 +370,8 @@ function Events() {
                             : 'text-gray-400 hover:text-gray-200 font-medium'
                     }`}
                 >
-                    <User size={18} />
-                    <span className="text-[10px] tracking-wide">PROFILE</span>
+                    <User strokeWidth={3}  size={18} className='text-gray-400' />
+                    <span className="text-[10px] tracking-wide">Profile</span>
                 </button>
             </nav>
         </div>

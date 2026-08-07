@@ -97,14 +97,14 @@ function Home() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-[#f5f5f5] text-gray-800 font-sans overflow-x-hidden pb-16 md:pb-0">
+        <div className="flex flex-col min-h-screen  text-gray-800 font-sans overflow-x-hidden pb-16 md:pb-0">
 
             {/* --- PREMIUM BOOKMYSHOW NAVBAR --- */}
-            <nav className="fixed bg-[#333545] text-white top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-12 shadow-md">
+            <nav className="fixed bg-white top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-12 shadow-md">
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
                         <p className="text-white text-xl md:text-2xl font-black tracking-tight">
-                            event<span className="text-rose-500">hub</span>
+                            <span className='text-black'>event</span><span className="text-rose-500">hub</span>
                         </p>
                     </div>
                 </div>
@@ -116,7 +116,7 @@ function Home() {
                         <input
                             type="text"
                             placeholder="Search for Movies, Events, Plays, Sports and Activities..."
-                            className="bg-transparent border-none text-xs w-full outline-none text-gray-800 placeholder-gray-400"
+                        className="bg-transparent border-none focus:ring-0 text-xs md:text-sm w-full outline-none p-0 text-gray-700 placeholder-gray-400"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onFocus={() => searchQuery && setIsDropdownOpen(true)}
@@ -320,7 +320,7 @@ function Home() {
             </footer>
 
             {/* --- FIXED MOBILE BOTTOM NAVIGATION BAR --- */}
-            <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#333545] border-t border-gray-700/60 md:hidden px-6 py-2.5 shadow-2xl flex items-center justify-around">
+            <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white md:hidden px-6 py-2.5 shadow-2xl flex items-center justify-around">
                 <button
                     onClick={() => navigate('/home')}
                     className={`flex flex-col items-center gap-1 transition-colors ${
@@ -329,8 +329,8 @@ function Home() {
                             : 'text-gray-400 hover:text-gray-200 font-medium'
                     }`}
                 >
-                    <HomeIcon size={18} />
-                    <span className="text-[10px] tracking-wide">HOME</span>
+                    <HomeIcon strokeWidth={3}  size={18}/>
+                    <span className="text-[10px] tracking-wide">Home</span>
                 </button>
 
                 <button
@@ -341,8 +341,8 @@ function Home() {
                             : 'text-gray-400 hover:text-gray-200 font-medium'
                     }`}
                 >
-                    <Ticket size={18} />
-                    <span className="text-[10px] tracking-wide">EVENT</span>
+                    <Ticket strokeWidth={3}  size={18} className='text-gray-400'/>
+                    <span className="text-[10px] tracking-wide">Event</span>
                 </button>
 
                 <button
@@ -353,8 +353,8 @@ function Home() {
                             : 'text-gray-400 hover:text-gray-200 font-medium'
                     }`}
                 >
-                    <User size={18} />
-                    <span className="text-[10px] tracking-wide">PROFILE</span>
+                    <User strokeWidth={3}  size={18} className='text-gray-400'/>
+                    <span className="text-[10px] tracking-wide">Profile</span>
                 </button>
             </nav>
         </div>
