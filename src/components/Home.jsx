@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { Search, LogOut, Calendar, X, Bell, TextAlignJustify, Menu, User, Heart, BookOpen, ArrowRight, Home as HomeIcon, Ticket } from 'lucide-react';
+import { Search, LogOut, Calendar, X, Bell, Menu, User, Heart, BookOpen, ArrowRight, Home as HomeIcon, Ticket } from 'lucide-react';
 import { getAllEvent, BASE_URLs } from '../api/Allapi';
 
 function Home() {
@@ -97,26 +97,26 @@ function Home() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen  text-gray-800 font-sans overflow-x-hidden pb-16 md:pb-0">
+        <div className="flex flex-col min-h-screen bg-white text-gray-800 font-sans overflow-x-hidden pb-16 md:pb-0">
 
-            {/* --- PREMIUM BOOKMYSHOW NAVBAR --- */}
-            <nav className="fixed bg-white top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-12 shadow-md">
+            {/* --- PREMIUM NAVBAR --- */}
+            <nav className="fixed bg-white top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-12 shadow-sm border-b border-gray-100">
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
-                        <p className="text-white text-xl md:text-2xl font-black tracking-tight">
-                            <span className='text-black'>event</span><span className="text-rose-500">hub</span>
+                        <p className="text-xl md:text-2xl font-black tracking-tight">
+                            <span className="text-gray-900">event</span><span className="text-rose-500">hub</span>
                         </p>
                     </div>
                 </div>
 
                 {/* Desktop Search Bar Layout */}
                 <div className="hidden md:block relative w-2/5 max-w-xl" ref={desktopSearchRef}>
-                    <div className="flex items-center bg-white rounded-md px-3 py-2 border border-transparent shadow-inner">
+                    <div className="flex items-center bg-gray-50 rounded-lg px-3 py-2 border border-gray-200 focus-within:border-rose-400 focus-within:bg-white transition-all">
                         <Search size={16} className="text-gray-400 mr-2 flex-shrink-0" />
                         <input
                             type="text"
                             placeholder="Search for Movies, Events, Plays, Sports and Activities..."
-                        className="bg-transparent border-none focus:ring-0 text-xs md:text-sm w-full outline-none p-0 text-gray-700 placeholder-gray-400"
+                            className="bg-transparent border-none focus:ring-0 text-xs md:text-sm w-full outline-none p-0 text-gray-700 placeholder-gray-400"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onFocus={() => searchQuery && setIsDropdownOpen(true)}
@@ -159,12 +159,12 @@ function Home() {
 
                 {/* Mobile Search Input Area */}
                 <div className="relative md:hidden flex-1 max-w-[160px] sm:max-w-[240px]" ref={mobileSearchRef}>
-                    <div className="flex items-center h-9 bg-white/10 rounded px-2 border border-transparent focus-within:bg-white focus-within:text-gray-800 transition-all">
-                        <Search size={14} className="text-gray-300 mr-1.5 flex-shrink-0" />
+                    <div className="flex items-center h-9 bg-gray-100 rounded px-2 border border-gray-200 focus-within:bg-white focus-within:border-rose-400 transition-all">
+                        <Search size={14} className="text-gray-400 mr-1.5 flex-shrink-0" />
                         <input
                             type="text"
                             placeholder="Search events..."
-                            className="bg-transparent border-none text-xs w-full outline-none text-white focus:text-gray-800 placeholder-gray-400 p-0"
+                            className="bg-transparent border-none text-xs w-full outline-none text-gray-800 placeholder-gray-400 p-0"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onFocus={() => searchQuery && setIsDropdownOpen(true)}
@@ -207,30 +207,29 @@ function Home() {
 
                 {/* Desktop Menu Utilities */}
                 <div className="hidden md:flex items-center gap-6">
-                    <button className="text-sm font-bold text-white border-b-2 border-[#f84464] pb-1">Home</button>
-
-                    <button onClick={() => navigate('/event')} className="text-xs font-semibold text-gray-200 hover:text-white transition-colors">Events</button>
-                    <button className="text-xs font-semibold text-gray-200 hover:text-white transition-colors">About</button>
-                    <div className="h-4 w-[1px] bg-gray-500/40" />
+                    <button className="text-xs font-bold text-rose-600 border-b-2 border-rose-500 pb-1">Home</button>
+                    <button onClick={() => navigate('/event')} className="text-xs font-semibold text-gray-600 hover:text-rose-600 transition-colors">Events</button>
+                    <button className="text-xs font-semibold text-gray-600 hover:text-rose-600 transition-colors">About</button>
+                    
+                    <div className="h-4 w-[1px] bg-gray-200" />
 
                     {/* User Profile Quick Tag */}
-                    <div className="flex items-center gap-2 bg-[#43465e] px-3 py-1 rounded border border-gray-600/30">
-                        <div className="w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center text-[10px] font-black uppercase text-white shadow-inner">
+                    <div className="flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">
+                        <div className="w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center text-[10px] font-black uppercase text-white shadow-sm">
                             {user?.username?.charAt(0)}
                         </div>
-                        <span className="text-xs font-medium text-gray-200 max-w-[80px] truncate">
+                        <span className="text-xs font-semibold text-gray-700 max-w-[80px] truncate">
                             Hi, {user?.username}
                         </span>
                     </div>
 
                     <Menu
                         size={20}
-                        className='cursor-pointer text-gray-300 hover:text-white transition-colors'
+                        className='cursor-pointer text-gray-600 hover:text-rose-600 transition-colors'
                         onClick={handleOpenModal}
                     />
                 </div>
             </nav>
-
 
             {/* --- DESKTOP RIGHT DRAWER MODAL --- */}
             {sideModal && (
@@ -253,13 +252,13 @@ function Home() {
                             </div>
 
                             <div className='flex flex-col gap-1.5'>
-                                <button onClick={() => { navigate('/myprofile'); setSideModal(false); }} className='flex items-center gap-3 px-4 py-3 text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-gray-50 rounded-xl transition-all text-left'>
+                                <button onClick={() => { navigate('/myprofile'); setSideModal(false); }} className='flex items-center gap-3 px-4 py-3 text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all text-left'>
                                     <User size={15} className="text-gray-400" /> Your Profile
                                 </button>
-                                <button onClick={() => { navigate('/fav'); setSideModal(false); }} className='flex items-center gap-3 px-4 py-3 text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-gray-50 rounded-xl transition-all text-left'>
+                                <button onClick={() => { navigate('/fav'); setSideModal(false); }} className='flex items-center gap-3 px-4 py-3 text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all text-left'>
                                     <Heart size={15} className="text-gray-400" /> Watchlist / Favorites
                                 </button>
-                                <button onClick={() => { navigate('/mybooking'); setSideModal(false); }} className='flex items-center gap-3 px-4 py-3 text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-gray-50 rounded-xl transition-all text-left'>
+                                <button onClick={() => { navigate('/mybooking'); setSideModal(false); }} className='flex items-center gap-3 px-4 py-3 text-xs font-bold text-gray-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all text-left'>
                                     <BookOpen size={15} className="text-gray-400" /> Transaction History
                                 </button>
                             </div>
@@ -304,32 +303,32 @@ function Home() {
 
                 {/* Cinematic Promo Banner Frame */}
                 <div className="flex-1 w-full flex justify-center lg:justify-end order-1 lg:order-2">
-                    <div className="relative w-full max-w-md lg:max-w-xl bg-white p-2 rounded-xl shadow-xl border border-gray-200/40">
+                    <div className="relative w-full max-w-md lg:max-w-xl bg-white p-2 rounded-xl shadow-xl border border-gray-100">
                         <img
                             src="https://cdn.dribbble.com/userupload/11885764/file/original-05d46ef8d3f6b5f33de19a893c819aeb.png?resize=1200x900&vertical=center"
                             alt="Entertainment Banner Showcase"
-                            className="w-full h-auto object-cover rounded-lg shadow"
+                            className="w-full h-auto object-cover rounded-lg shadow-sm"
                         />
                     </div>
                 </div>
             </main>
 
             {/* --- SUB-FOOTER BRAND BADGE --- */}
-            <footer className="w-full bg-[#333545] text-gray-400 py-4 text-center text-xs font-semibold border-t border-gray-700/50 mt-auto">
-                24/7 Customer Care Assistance Support Active • <span className="text-white cursor-pointer hover:underline">Help Center</span>
+            <footer className="w-full bg-gray-50 text-gray-500 py-4 text-center text-xs font-semibold border-t border-gray-200 mt-auto">
+                24/7 Customer Care Assistance Support Active • <span className="text-rose-600 cursor-pointer hover:underline">Help Center</span>
             </footer>
 
             {/* --- FIXED MOBILE BOTTOM NAVIGATION BAR --- */}
-            <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white md:hidden px-6 py-2.5 shadow-2xl flex items-center justify-around">
+            <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 md:hidden px-6 py-2.5 shadow-lg flex items-center justify-around">
                 <button
                     onClick={() => navigate('/home')}
                     className={`flex flex-col items-center gap-1 transition-colors ${
                         location.pathname === '/home' || location.pathname === '/' 
                             ? 'text-rose-500 font-bold' 
-                            : 'text-gray-400 hover:text-gray-200 font-medium'
+                            : 'text-gray-500 hover:text-gray-800 font-medium'
                     }`}
                 >
-                    <HomeIcon strokeWidth={3}  size={18}/>
+                    <HomeIcon strokeWidth={2.5} size={18}/>
                     <span className="text-[10px] tracking-wide">Home</span>
                 </button>
 
@@ -338,10 +337,10 @@ function Home() {
                     className={`flex flex-col items-center gap-1 transition-colors ${
                         location.pathname === '/event' 
                             ? 'text-rose-500 font-bold' 
-                            : 'text-gray-400 hover:text-gray-200 font-medium'
+                            : 'text-gray-500 hover:text-gray-800 font-medium'
                     }`}
                 >
-                    <Ticket strokeWidth={3}  size={18} className='text-gray-400'/>
+                    <Ticket strokeWidth={2.5} size={18}/>
                     <span className="text-[10px] tracking-wide">Event</span>
                 </button>
 
@@ -350,10 +349,10 @@ function Home() {
                     className={`flex flex-col items-center gap-1 transition-colors ${
                         location.pathname === '/myprofile' 
                             ? 'text-rose-500 font-bold' 
-                            : 'text-gray-400 hover:text-gray-200 font-medium'
+                            : 'text-gray-500 hover:text-gray-800 font-medium'
                     }`}
                 >
-                    <User strokeWidth={3}  size={18} className='text-gray-400'/>
+                    <User strokeWidth={2.5} size={18}/>
                     <span className="text-[10px] tracking-wide">Profile</span>
                 </button>
             </nav>

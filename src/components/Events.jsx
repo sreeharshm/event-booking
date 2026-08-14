@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { addFavEvent, getAllEvent } from '../api/Allapi';
+import { addFavEvent, getAllEvent, BASE_URLs } from '../api/Allapi';
 import { Heart, LogOut, Search, X, Calendar, Menu, User, BookOpen, HomeIcon, Ticket } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -13,10 +13,11 @@ function Events() {
     const [filteredResults, setFilteredResults] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
-    const searchRef = useRef(null);
+    const deesktopSearchRef = useRef(null);
+    const mobileSearchRef = useRef(null);
 
     const navigate = useNavigate();
-    const location = useLocation(); // Fixed: declared useLocation
+    const location = useLocation();
 
     const [sideModal, setSideModal] = useState(false);
 
@@ -28,7 +29,7 @@ function Events() {
         fetchEvents();
     }, []);
 
-    // 2. Search Logic
+    // 2. Search Logic with Debounce
     useEffect(() => {
         const delay = setTimeout(() => {
             if (searchQuery.trim() === "") {
@@ -38,7 +39,7 @@ function Events() {
             } else {
                 const results = events
                     .filter((event) =>
-                        event.title?.toLowerCase().startsWith(searchQuery.toLowerCase())
+                        event.title?.toLowerCase().includes(searchQuery.toLowerCase())
                     )
                     .slice(0, 5);
                 setFilteredResults(results);
@@ -60,18 +61,42 @@ function Events() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    // Keyboard navigation for search results
+    const handleKeyDown = (e) => {
+        if (!isDropdownOpen || filteredResults.length === 0) return;
+
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setActiveIndex((prev) => (prev < filteredResults.length - 1 ? prev + 1 : 0));
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            setActiveIndex((prev) => (prev > 0 ? prev - 1 : filteredResults.length - 1));
+        } else if (e.key === "Enter" && activeIndex >= 0) {
+            e.preventDefault();
+            const selectedItem = filteredResults[activeIndex];
+            if (selectedItem) {
+                setSearchQuery(selectedItem.title || "");
+                setIsDropdownOpen(false);
+                navigate(`/booking/${selectedItem.id}`);
+            }
+        } else if (e.key === "Escape") {
+            setIsDropdownOpen(false);
+        }
+    };
+
     const fetchEvents = async () => {
         setLoading(true);
         try {
             const res = await getAllEvent();
             setEvents(res.data);
         } catch (err) {
-            console.error("event fetching failed", err);
+            console.error("Event fetching failed", err);
         } finally {
             setLoading(false);
         }
     };
 
+    // Optimistic Favorite Toggle
     const handleFavEvent = async (eventId) => {
         const token = localStorage.getItem("access");
         if (!token) {
@@ -79,8 +104,8 @@ function Events() {
             return;
         }
 
-        setEvents(prev =>
-            prev.map(ev =>
+        setEvents((prev) =>
+            prev.map((ev) =>
                 ev.id === eventId
                     ? { ...ev, is_favorite: !ev.is_favorite }
                     : ev
@@ -91,7 +116,7 @@ function Events() {
             await addFavEvent({}, eventId);
         } catch (err) {
             console.error("Favorite sync failed", err);
-            fetchEvents();
+            fetchEvents(); // Revert state if backend call fails
         }
     };
 
@@ -111,32 +136,34 @@ function Events() {
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
                         <p className="text-black text-xl md:text-2xl font-black tracking-tight font-sans">
-                            book<span className="text-[#f84464]">my</span>show
+                            <span className="text-[#f84464]">event</span>hub
                         </p>
                     </div>
                 </div>
 
                 {/* Search Bar Wrapper */}
-                <div className="relative flex items-center h-10 flex-1 max-w-[200px] sm:max-w-xs md:max-w-md bg-white rounded-md px-3 border border-gray-200 shadow-inner" ref={searchRef}>
-                    <Search size={16} className="text-gray-400 mr-2 flex-shrink-0" />
-                    <input
-                        type="text"
-                        placeholder="Search for Movies, Events, Plays and Activities..."
-                        className="bg-transparent border-none focus:ring-0 text-xs md:text-sm w-full outline-none p-0 text-gray-700 placeholder-gray-400"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onFocus={() => searchQuery && setIsDropdownOpen(true)}
-                    />
-                    {searchQuery && (
-                        <X
-                            size={16}
-                            onClick={() => { setSearchQuery(""); setIsDropdownOpen(false); }}
-                            className="text-gray-400 cursor-pointer hover:text-[#f84464]"
+                <div className="hidden md:block relative w-2/5 max-w-xl" ref={deesktopSearchRef}>
+                    <div className="flex items-center bg-gray-50 rounded-lg px-3 py-2 border border-gray-200 focus-within:border-rose-400 focus-within:bg-white transition-all">
+                        <Search size={16} className="text-gray-400 mr-2 flex-shrink-0" />
+                        <input
+                            type="text"
+                            placeholder="Search for Movies, Events, Plays, Sports and Activities..."
+                            className="bg-transparent border-none focus:ring-0 text-xs md:text-sm w-full outline-none p-0 text-gray-700 placeholder-gray-400"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onFocus={() => searchQuery && setIsDropdownOpen(true)}
                         />
-                    )}
+                        {searchQuery && (
+                            <X
+                                size={16}
+                                onClick={() => { setSearchQuery(""); setIsDropdownOpen(false); }}
+                                className="text-gray-400 cursor-pointer hover:text-rose-500"
+                            />
+                        )}
+                    </div>
 
                     {isDropdownOpen && filteredResults.length > 0 && (
-                        <div className="absolute top-11 left-0 w-full bg-white border border-gray-200 rounded-b-lg shadow-2xl z-[60] overflow-hidden">
+                        <div className="absolute top-11 left-0 w-full bg-white border border-gray-200 rounded-md shadow-2xl z-[60] overflow-hidden text-gray-800">
                             {filteredResults.map((item, index) => (
                                 <div
                                     key={item.id}
@@ -145,16 +172,63 @@ function Events() {
                                         setIsDropdownOpen(false);
                                         navigate(`/booking/${item.id}`);
                                     }}
-                                    className={`px-4 py-3 cursor-pointer border-b border-gray-100 flex items-center gap-3 transition-colors ${index === activeIndex ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                                    className={`px-4 py-3 cursor-pointer border-b border-gray-100 flex items-center gap-3 transition-colors ${index === activeIndex ? "bg-rose-50 text-rose-600" : "hover:bg-rose-50"}`}
                                 >
                                     <img
-                                        src={item.image || "https://via.placeholder.com/40"}
+                                        src={item.image ? `${BASE_URLs}${item.image}` : "https://via.placeholder.com/40"}
                                         alt=""
-                                        className="w-8 h-8 rounded object-cover"
+                                        className="w-9 h-12 rounded object-cover shadow-sm"
                                     />
-                                    <div>
+                                    <div className="min-w-0 flex-1">
                                         <p className="text-sm font-bold text-gray-800 truncate">{item.title}</p>
-                                        <p className="text-[10px] text-gray-500 uppercase">{item.location}</p>
+                                        <p className="text-[10px] text-gray-400 uppercase tracking-wider mt-0.5">{item.location}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                
+                <div className="relative md:hidden flex-1 max-w-[160px] sm:max-w-[240px]" ref={mobileSearchRef}>
+                    <div className="flex items-center h-9 bg-gray-100 rounded px-2 border border-gray-200 focus-within:bg-white focus-within:border-rose-400 transition-all">
+                        <Search size={14} className="text-gray-400 mr-1.5 flex-shrink-0" />
+                        <input
+                            type="text"
+                            placeholder="Search events..."
+                            className="bg-transparent border-none text-xs w-full outline-none text-gray-800 placeholder-gray-400 p-0"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onFocus={() => searchQuery && setIsDropdownOpen(true)}
+                        />
+                        {searchQuery && (
+                            <X
+                                size={14}
+                                onClick={() => { setSearchQuery(""); setIsDropdownOpen(false); }}
+                                className="text-gray-400 cursor-pointer hover:text-rose-500 ml-1"
+                            />
+                        )}
+                    </div>
+
+                    {isDropdownOpen && filteredResults.length > 0 && (
+                        <div className="absolute top-11 right-0 w-[220px] bg-white border border-gray-200 rounded shadow-2xl z-[60] overflow-hidden text-gray-800">
+                            {filteredResults.map((item, index) => (
+                                <div
+                                    key={item.id}
+                                    onClick={() => {
+                                        setSearchQuery(item.title || "");
+                                        setIsDropdownOpen(false);
+                                        navigate(`/booking/${item.id}`);
+                                    }}
+                                    className={`px-3 py-2.5 cursor-pointer border-b border-gray-100 flex items-center gap-2 transition-colors ${index === activeIndex ? "bg-rose-50 text-rose-600" : "hover:bg-rose-50"}`}
+                                >
+                                    <img
+                                        src={item.image ? `${BASE_URLs}${item.image}` : "https://via.placeholder.com/40"}
+                                        alt=""
+                                        className="w-7 h-10 rounded object-cover shadow-sm flex-shrink-0"
+                                    />
+                                    <div className="min-w-0 flex-1">
+                                        <p className="text-[11px] font-bold text-gray-800 truncate">{item.title}</p>
+                                        <p className="text-[9px] text-gray-400 uppercase truncate">{item.location}</p>
                                     </div>
                                 </div>
                             ))}
@@ -162,28 +236,34 @@ function Events() {
                     )}
                 </div>
 
+                {/* Right Desktop Nav Items */}
                 <div className="hidden md:flex items-center gap-6">
-                    <button onClick={() => navigate('/home')} className="text-xs font-medium text-gray-300 hover:text-white transition-colors">Home</button>
-                    <button className="text-sm font-bold text-white border-b-2 border-[#f84464] pb-1">Events</button>
-                    <button className="text-xs font-medium text-gray-300 hover:text-white transition-colors">About</button>
 
-                    <div className="flex items-center gap-3 bg-[#43465e] px-4 py-1.5 rounded-full border border-gray-600/40">
-                        <div className="w-7 h-7 bg-rose-500 rounded-full flex items-center justify-center text-xs font-bold uppercase text-white shadow-inner">
-                            {user?.username?.charAt(0) || <User size={12} />}
+                    <button onClick={() => navigate('/home')} className="text-xs font-semibold text-gray-600 hover:text-rose-600 transition-colors">Home</button>
+                    <button className="text-xs font-bold text-rose-600 border-b-2 border-rose-500 pb-1">Event</button>
+                    <button className="text-xs font-semibold text-gray-600 hover:text-rose-600 transition-colors">About</button>
+
+                    <div className="h-4 w-[1px] bg-gray-200" />
+
+                    {/* User Profile Quick Tag */}
+                    <div className="flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">
+                        <div className="w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center text-[10px] font-black uppercase text-white shadow-sm">
+                            {user?.username?.charAt(0)}
                         </div>
-                        <span className="text-xs font-semibold tracking-wide hidden sm:inline text-gray-200">
-                            {user?.username || "Guest"}
+                        <span className="text-xs font-semibold text-gray-700 max-w-[80px] truncate">
+                            Hi, {user?.username}
                         </span>
                     </div>
 
                     <Menu
                         size={20}
-                        className='cursor-pointer text-gray-300 hover:text-white transition-colors'
+                        className='cursor-pointer text-gray-600 hover:text-rose-600 transition-colors'
                         onClick={handleOpenModal}
                     />
                 </div>
             </nav>
 
+            {/* --- SIDE MODAL MENU --- */}
             {sideModal && (
                 <div
                     className='inset-0 fixed bg-black/40 z-50 backdrop-blur-xs animate-in fade-in duration-200'
@@ -226,7 +306,7 @@ function Events() {
                 </div>
             )}
 
-            {/* Header Section */}
+            {/* --- HEADER SECTION --- */}
             <div className="pt-24 md:pt-28 px-4 md:px-12 max-w-7xl mx-auto mb-6 md:mb-8">
                 <h1 className="text-2xl md:text-3xl font-bold text-[#222222] mb-1">
                     Events In Your Location
@@ -234,7 +314,7 @@ function Events() {
                 <p className="text-xs md:text-sm text-gray-500">Discover live experiences, masterclasses, and music shows around you.</p>
             </div>
 
-            {/* Content Grid */}
+            {/* --- CONTENT GRID --- */}
             <div className="px-4 md:px-12 max-w-7xl mx-auto">
                 {loading ? (
                     <div className="flex justify-center items-center py-20">
@@ -258,9 +338,10 @@ function Events() {
                                                 e.currentTarget.onerror = null;
                                                 e.currentTarget.src = "https://via.placeholder.com/400x600";
                                             }}
-                                            className="w-full h-full object-cover transition-transform duration-300"
+                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                         />
 
+                                        {/* Animated Heart Button */}
                                         <motion.button
                                             whileHover={{ scale: 1.1 }}
                                             whileTap={{ scale: 0.9 }}
@@ -279,13 +360,16 @@ function Events() {
                                                 >
                                                     <Heart
                                                         size={16}
-                                                        className={`transition-colors ${event.is_favorite ? "text-[#f84464] fill-[#f84464]" : "text-white"}`}
+                                                        className={`transition-colors ${event.is_favorite
+                                                            ? "text-[#f84464] fill-[#f84464]"
+                                                            : "text-white"
+                                                            }`}
                                                     />
                                                 </motion.div>
                                             </AnimatePresence>
                                         </motion.button>
 
-                                        {/* Bottom Overlay Info Banner */}
+                                        {/* Overlay Info Banner */}
                                         <div className="absolute bottom-0 left-0 w-full bg-black/70 backdrop-blur-xs text-white px-3 py-1.5 text-xs md:text-sm font-medium flex justify-between items-center">
                                             <span>₹{event.price} onwards</span>
                                             <span className={`text-[10px] md:text-xs font-bold ${event.capacity <= 5 ? "text-orange-400" : "text-emerald-400"}`}>
@@ -314,11 +398,10 @@ function Events() {
                                         <div className="pt-2">
                                             <button
                                                 disabled={event.capacity === 0}
-                                                className={`w-full py-2 rounded-lg text-xs md:text-sm font-bold transition-all ${
-                                                    event.capacity === 0
-                                                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                                                        : "bg-[#f84464] text-white hover:bg-[#f84464]/90"
-                                                }`}
+                                                className={`w-full py-2 rounded-lg text-xs md:text-sm font-bold transition-all ${event.capacity === 0
+                                                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                    : "bg-[#f84464] text-white hover:bg-[#f84464]/90"
+                                                    }`}
                                             >
                                                 {event.capacity === 0 ? "Sold Out" : "Book Tickets"}
                                             </button>
@@ -336,41 +419,38 @@ function Events() {
                 )}
             </div>
 
-            {/* Mobile Bottom Navigation */}
-            <nav className="fixed bg-white bottom-0 left-0 right-0 z-50 border-gray-700/60 md:hidden px-6 py-2.5 shadow-2xl flex items-center justify-around">
+            {/* --- MOBILE BOTTOM NAVIGATION --- */}
+            <nav className="fixed bg-white bottom-0 left-0 right-0 z-50 border-t border-gray-200 md:hidden px-6 py-2.5 shadow-2xl flex items-center justify-around">
                 <button
                     onClick={() => navigate('/home')}
-                    className={`flex flex-col items-center gap-1 transition-colors ${
-                        location.pathname === '/home' || location.pathname === '/' 
-                            ? 'text-rose-500 font-bold' 
-                            : 'text-gray-400 hover:text-gray-200 font-medium'
-                    }`}
+                    className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === '/home' || location.pathname === '/'
+                        ? 'text-[#f84464] font-bold'
+                        : 'text-gray-400 hover:text-gray-600 font-medium'
+                        }`}
                 >
-                    <HomeIcon strokeWidth={3}  size={18} className='text-gray-400' />
+                    <HomeIcon strokeWidth={2.5} size={18} className={location.pathname === '/home' || location.pathname === '/' ? 'text-[#f84464]' : 'text-gray-400'} />
                     <span className="text-[10px] tracking-wide">Home</span>
                 </button>
 
                 <button
                     onClick={() => navigate('/event')}
-                    className={`flex flex-col items-center gap-1 transition-colors ${
-                        location.pathname === '/event' 
-                            ? 'text-rose-500 font-bold' 
-                            : 'text-gray-400 hover:text-gray-200 font-medium'
-                    }`}
+                    className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === '/event'
+                        ? 'text-[#f84464] font-bold'
+                        : 'text-gray-400 hover:text-gray-600 font-medium'
+                        }`}
                 >
-                    <Ticket strokeWidth={3} size={18} />
+                    <Ticket strokeWidth={2.5} size={18} className={location.pathname === '/event' ? 'text-[#f84464]' : 'text-gray-400'} />
                     <span className="text-[10px] tracking-wide">Event</span>
                 </button>
 
                 <button
                     onClick={() => navigate('/myprofile')}
-                    className={`flex flex-col items-center gap-1 transition-colors ${
-                        location.pathname === '/myprofile' 
-                            ? 'text-rose-500 font-bold' 
-                            : 'text-gray-400 hover:text-gray-200 font-medium'
-                    }`}
+                    className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === '/myprofile'
+                        ? 'text-[#f84464] font-bold'
+                        : 'text-gray-400 hover:text-gray-600 font-medium'
+                        }`}
                 >
-                    <User strokeWidth={3}  size={18} className='text-gray-400' />
+                    <User strokeWidth={2.5} size={18} className={location.pathname === '/myprofile' ? 'text-[#f84464]' : 'text-gray-400'} />
                     <span className="text-[10px] tracking-wide">Profile</span>
                 </button>
             </nav>

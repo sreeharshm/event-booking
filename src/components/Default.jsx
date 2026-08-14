@@ -6,10 +6,10 @@ function Default() {
     return (
         <div className='min-h-screen bg-[#F5F5F5] text-gray-800 antialiased'>
             {/* Navbar */}
-            <nav className="fixed bg-[#333545] top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-6 md:px-16 shadow-md">
+            <nav className="fixed bg-white border-b border-gray-200 top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-6 md:px-16 shadow-sm">
                 <div className='flex items-center gap-6'>
-                    <div className='flex items-center gap-2 text-white'>
-                        <div className='bg-[#F84464] p-2 rounded-md'>
+                    <div className='flex items-center gap-2 text-gray-900'>
+                        <div className='bg-[#F84464] p-2 rounded-md text-white'>
                             <Ticket size={20} className="transform -rotate-12" />
                         </div>
                         <p className='text-2xl font-black tracking-tight'>
@@ -17,15 +17,15 @@ function Default() {
                         </p>
                     </div>
                     
-                    {/* Simplified Location Selector reminiscent of BMS */}
-                    <div className='hidden sm:flex items-center gap-1 text-gray-300 text-xs hover:text-white cursor-pointer transition-colors'>
+                    {/* Location Selector */}
+                    <div className='hidden sm:flex items-center gap-1 text-gray-600 text-xs hover:text-gray-900 cursor-pointer transition-colors font-medium'>
                         <MapPin size={14} className="text-[#F84464]" />
                         <span>Select City</span>
                     </div>
                 </div>
                 
                 <div className='flex items-center gap-4'>
-                    <Link to='/login' className='text-xs font-medium text-gray-200 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded transition-all'>
+                    <Link to='/login' className='text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3.5 py-1.5 rounded transition-all'>
                         Sign In
                     </Link>
                     <Link to='/register' className='hidden md:block'>
@@ -37,13 +37,13 @@ function Default() {
             </nav>
 
             {/* Sub-Header / Navigation Strip */}
-            <div className="fixed top-16 left-0 w-full bg-[#1F2533] text-gray-300 text-xs py-2.5 px-6 md:px-16 z-40 hidden sm:flex gap-6 items-center">
-                <span className="hover:text-white cursor-pointer transition-colors font-medium">Movies</span>
-                <span className="hover:text-white cursor-pointer transition-colors font-medium text-white border-b-2 border-[#F84464] pb-0.5">Stream</span>
-                <span className="hover:text-white cursor-pointer transition-colors font-medium">Live Events</span>
-                <span className="hover:text-white cursor-pointer transition-colors font-medium">Comedy Shows</span>
-                <span className="hover:text-white cursor-pointer transition-colors font-medium">Sports</span>
-                <span className="hover:text-white cursor-pointer transition-colors font-medium">Plays</span>
+            <div className="fixed top-16 left-0 w-full bg-white border-b border-gray-200 text-gray-600 text-xs py-2.5 px-6 md:px-16 z-40 hidden sm:flex gap-6 items-center">
+                <span className="hover:text-gray-900 cursor-pointer transition-colors font-medium">Movies</span>
+                <span className="hover:text-gray-900 cursor-pointer transition-colors font-bold text-[#F84464] border-b-2 border-[#F84464] pb-0.5">Stream</span>
+                <span className="hover:text-gray-900 cursor-pointer transition-colors font-medium">Live Events</span>
+                <span className="hover:text-gray-900 cursor-pointer transition-colors font-medium">Comedy Shows</span>
+                <span className="hover:text-gray-900 cursor-pointer transition-colors font-medium">Sports</span>
+                <span className="hover:text-gray-900 cursor-pointer transition-colors font-medium">Plays</span>
             </div>
 
             {/* Hero Section */}
@@ -55,7 +55,7 @@ function Default() {
                         <span>Your Entertainment Guide</span>
                     </div>
 
-                    <h1 className="text-4xl md:text-6xl font-extrabold leading-[1.1] tracking-tight text-[#1F2533]">
+                    <h1 className="text-4xl md:text-6xl font-extrabold leading-[1.1] tracking-tight text-gray-900">
                         Movies, Comedy, <br />
                         <span className="text-[#F84464]">Music & More.</span>
                     </h1>
@@ -93,16 +93,16 @@ function Default() {
                     {/* Quick Stats Grid */}
                     <div className='grid grid-cols-3 gap-4 pt-6 border-t border-gray-200 max-w-md'>
                         <div>
-                            <p className='text-xl md:text-2xl font-extrabold text-[#1F2533]'>1,000+</p>
-                            <p className='text-[10px] font-bold text-gray-400 uppercase tracking-wider'>Cinemas</p>
+                            <p className='text-xl md:text-2xl font-extrabold text-gray-900'>1,000+</p>
+                            <p className='text-[10px] font-bold text-gray-500 uppercase tracking-wider'>Cinemas</p>
                         </div>
                         <div>
-                            <p className='text-xl md:text-2xl font-extrabold text-[#1F2533]'>30+</p>
-                            <p className='text-[10px] font-bold text-gray-400 uppercase tracking-wider'>Cities</p>
+                            <p className='text-xl md:text-2xl font-extrabold text-gray-900'>30+</p>
+                            <p className='text-[10px] font-bold text-gray-500 uppercase tracking-wider'>Cities</p>
                         </div>
                         <div>
-                            <p className='text-xl md:text-2xl font-extrabold text-[#1F2533]'>15M+</p>
-                            <p className='text-[10px] font-bold text-gray-400 uppercase tracking-wider'>Tickets Registered</p>
+                            <p className='text-xl md:text-2xl font-extrabold text-gray-900'>15M+</p>
+                            <p className='text-[10px] font-bold text-gray-500 uppercase tracking-wider'>Tickets Registered</p>
                         </div>
                     </div>
                 </div>
@@ -116,14 +116,14 @@ function Default() {
                             className="w-full rounded-md object-cover filter contrast-[1.02]"
                         />
                         
-                        {/* Floating BMS Style Tag */}
-                        <div className='absolute bottom-6 right-6 bg-[#1F2533] text-white py-2 px-4 rounded-md shadow-lg flex items-center gap-2.5'>
+                        {/* Floating Feature Tag */}
+                        <div className='absolute bottom-6 right-6 bg-white border border-gray-200 text-gray-800 py-2 px-4 rounded-md shadow-lg flex items-center gap-2.5'>
                             <div className='bg-[#F84464] p-1.5 rounded text-white'>
                                 <Film size={16} />
                             </div>
                             <div>
                                 <p className='text-[10px] font-bold text-gray-400 uppercase leading-none tracking-wider'>Now Streaming</p>
-                                <p className='text-xs font-bold text-white mt-0.5'>Exclusive Premieres</p>
+                                <p className='text-xs font-bold text-gray-900 mt-0.5'>Exclusive Premieres</p>
                             </div>
                         </div>
                     </div>
