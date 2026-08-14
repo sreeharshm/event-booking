@@ -1,24 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import {
-    getFavEvent,
-    removeFavEvent,
-    curretUser,
-    BASE_URLs,
-} from "../api/Allapi";
-
-import {
-    User,
-    ShieldCheck,
-    Loader2,
-    LogOut,
-    ArrowLeft,
-    Calendar,
-    Heart,
-    Search,
-    Menu,
-    X,
-} from "lucide-react";
-
+import { getFavEvent, removeFavEvent, curretUser, BASE_URLs } from "../api/Allapi";
+import { User, ShieldCheck, Loader2, LogOut, ArrowLeft, Calendar, Heart, Search, Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -41,6 +23,16 @@ function FavEvent() {
     const [activeIndex, setActiveIndex] = useState(-1);
 
     const searchRef = useRef(null);
+
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return "https://via.placeholder.com/400x600";
+        if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+            return imagePath;
+        }
+        const baseUrl = BASE_URLs?.endsWith("/") ? BASE_URLs.slice(0, -1) : BASE_URLs;
+        const path = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+        return `${baseUrl}${path}`;
+    };
 
     useEffect(() => {
         fetchUserData();
@@ -68,7 +60,6 @@ function FavEvent() {
                 setIsDropdownOpen(false);
                 return;
             }
-
             const results = favorites
                 .filter((item) => {
                     const event = item.event || item;
@@ -93,9 +84,7 @@ function FavEvent() {
                 setIsDropdownOpen(false);
             }
         };
-
         document.addEventListener("mousedown", close);
-
         return () => document.removeEventListener("mousedown", close);
     }, []);
 
@@ -115,10 +104,8 @@ function FavEvent() {
 
     const fetchFavorites = async () => {
         setLoading(true);
-
         try {
             const res = await getFavEvent();
-
             setFavorites(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             console.log(err);
@@ -134,7 +121,6 @@ function FavEvent() {
                 return event.id !== id;
             })
         );
-
         try {
             await removeFavEvent(id);
         } catch {
@@ -160,13 +146,14 @@ function FavEvent() {
 
     return (
         <div className="min-h-screen bg-[#f8f9fa] text-gray-800">
-            <nav className="bg-[#1f2533] sticky top-0 z-50 shadow-md px-4 py-3">
+            {/* LIGHT NAVBAR */}
+            <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm px-4 py-3">
                 <div className="max-w-6xl mx-auto flex items-center justify-between">
                     <div
                         className="cursor-pointer"
                         onClick={() => navigate("/home")}
                     >
-                        <p className="text-2xl font-black text-white">
+                        <p className="text-2xl font-black text-gray-900">
                             event
                             <span className="text-rose-500">hub</span>
                         </p>
@@ -176,14 +163,14 @@ function FavEvent() {
                         ref={searchRef}
                         className="hidden md:block relative w-full max-w-md mx-8"
                     >
-                        <div className="flex items-center bg-[#2f364a] rounded-xl px-4 py-2">
+                        <div className="flex items-center bg-gray-100 border border-gray-200 rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-rose-500/20 focus-within:border-rose-500 transition-all">
                             <Search
                                 size={16}
                                 className="text-gray-400 mr-2"
                             />
 
                             <input
-                                className="bg-transparent text-white w-full outline-none text-sm"
+                                className="bg-transparent text-gray-800 w-full outline-none text-sm placeholder:text-gray-400"
                                 placeholder="Search favourite events..."
                                 value={searchQuery}
                                 onChange={(e) =>
@@ -198,14 +185,13 @@ function FavEvent() {
                                         setSearchQuery("");
                                         setIsDropdownOpen(false);
                                     }}
-                                    className="cursor-pointer text-gray-400"
+                                    className="cursor-pointer text-gray-400 hover:text-gray-600"
                                 />
                             )}
                         </div>
 
                         {isDropdownOpen && filteredResults.length > 0 && (
-                            <div className="absolute top-12 left-0 w-full bg-white rounded-xl shadow-xl  overflow-hidden">
-
+                            <div className="absolute top-12 left-0 w-full bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
                                 {filteredResults.map((item) => {
                                     const event = item.event || item;
 
@@ -215,7 +201,7 @@ function FavEvent() {
                                             onClick={() => {
                                                 navigate(`/booking/${event.id}`);
                                             }}
-                                            className="flex items-center gap-3 px-4 py-3 hover:bg-rose-50 cursor-pointer"
+                                            className="flex items-center gap-3 px-4 py-3 hover:bg-rose-50 cursor-pointer border-b last:border-none border-gray-100"
                                         >
                                             <img
                                                 src={getImageUrl(event.image)}
@@ -224,11 +210,11 @@ function FavEvent() {
                                             />
 
                                             <div>
-                                                <p className="font-semibold text-sm">
+                                                <p className="font-semibold text-sm text-gray-800">
                                                     {event.title}
                                                 </p>
 
-                                                <p className="text-xs text-gray-400">
+                                                <p className="text-xs text-gray-500">
                                                     {event.location}
                                                 </p>
                                             </div>
@@ -239,12 +225,13 @@ function FavEvent() {
                         )}
                     </div>
 
-                    <div className="flex items-center gap-3 bg-[#2f364a] px-4 py-1.5 rounded-full  ">
+                    {/* USER BADGE - LIGHT STYLING */}
+                    <div className="flex items-center gap-3 bg-gray-100 border border-gray-200 px-4 py-1.5 rounded-full">
                         <div className="w-8 h-8 rounded-full bg-rose-500 flex justify-center items-center text-white font-bold uppercase">
                             {user?.username?.charAt(0)}
                         </div>
 
-                        <span className="hidden sm:block text-sm text-white">
+                        <span className="hidden sm:block text-sm text-gray-700 font-medium">
                             Hi, {user?.username}
                         </span>
                     </div>
@@ -256,10 +243,9 @@ function FavEvent() {
                 {/* Control Bar */}
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
-
                         <button
                             onClick={() => setSidebarOpen(!sidebarOpen)}
-                            className="p-2.5 rounded-xl   bg-white hover:bg-gray-50 shadow-sm"
+                            className="p-2.5 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 shadow-sm text-gray-700"
                         >
                             {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
                         </button>
@@ -275,22 +261,20 @@ function FavEvent() {
                 </div>
 
                 <div className="flex gap-6 relative items-start">
-
                     {/* SIDEBAR */}
-
                     <aside
-                        className={`fixed md:sticky top-0 md:top-24 left-0 z-40 h-screen md:h-auto bg-white shadow-xl md:shadow-sm
+                        className={`fixed md:sticky top-0 md:top-24 left-0 z-40 h-screen md:h-auto bg-white border border-gray-100 shadow-xl md:shadow-sm
                                     md:rounded-2xl overflow-hidden transition-all duration-300
-                                    ${sidebarOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full md:w-20 md:translate-x-0"}`}>
-
-                        <div className="p-5 bg-gradient-to-b from-gray-50 to-white  flex flex-col items-center">
+                                    ${sidebarOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full md:w-20 md:translate-x-0"}`}
+                    >
+                        <div className="p-5 bg-gradient-to-b from-gray-50 to-white flex flex-col items-center border-b border-gray-100">
                             <div className="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center text-2xl font-black text-rose-600 mb-3">
                                 {user?.username?.charAt(0)}
                             </div>
 
                             {sidebarOpen && (
                                 <>
-                                    <h3 className="font-bold">{user?.username}</h3>
+                                    <h3 className="font-bold text-gray-900">{user?.username}</h3>
 
                                     <p className="text-xs text-gray-400 truncate">
                                         {user?.email}
@@ -300,10 +284,9 @@ function FavEvent() {
                         </div>
 
                         <div className="p-3 space-y-2">
-
                             <button
                                 onClick={() => navigate("/myprofile")}
-                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-rose-50 hover:text-rose-600"
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-rose-50 hover:text-rose-600 transition-colors"
                             >
                                 <User size={18} />
 
@@ -331,7 +314,7 @@ function FavEvent() {
 
                             <button
                                 onClick={() => navigate("/mybooking")}
-                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-rose-50 hover:text-rose-600"
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-rose-50 hover:text-rose-600 transition-colors"
                             >
                                 <ShieldCheck size={18} />
 
@@ -342,11 +325,11 @@ function FavEvent() {
                                 )}
                             </button>
 
-                            <div className=" my-2"></div>
+                            <div className="my-2 border-t border-gray-100"></div>
 
                             <button
                                 onClick={handleLogout}
-                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-500 hover:bg-red-50 hover:text-red-600"
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
                             >
                                 <LogOut size={18} />
 
@@ -360,7 +343,6 @@ function FavEvent() {
                     </aside>
 
                     {/* MOBILE OVERLAY */}
-
                     {sidebarOpen && (
                         <div
                             onClick={() => setSidebarOpen(false)}
@@ -369,11 +351,10 @@ function FavEvent() {
                     )}
 
                     {/* MAIN CONTENT */}
-
-                    <main className="flex-1 bg-white rounded-2xl shadow-sm  overflow-hidden">
-                        <div className="px-6 py-5  bg-gray-50 flex justify-between items-center">
+                    <main className="flex-1 bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+                        <div className="px-6 py-5 bg-gray-50 flex justify-between items-center border-b border-gray-100">
                             <div>
-                                <h2 className="text-xl font-black">
+                                <h2 className="text-xl font-black text-gray-900">
                                     ❤️ My Favourite Events
                                 </h2>
                                 <p className="text-sm text-gray-500">
@@ -381,11 +362,11 @@ function FavEvent() {
                                 </p>
                             </div>
 
-                            <div className="bg-rose-100 rounded-xl px-5 py-3 text-center">
+                            <div className="bg-rose-100/70 border border-rose-200 rounded-xl px-5 py-3 text-center">
                                 <p className="text-2xl font-black text-rose-600">
                                     {favorites.length}
                                 </p>
-                                <p className="text-xs text-gray-500 uppercase">
+                                <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">
                                     Saved
                                 </p>
                             </div>
@@ -399,13 +380,12 @@ function FavEvent() {
                                     ?.toLowerCase()
                                     .includes(searchQuery.toLowerCase());
                             }).length === 0 ? (
-
                                 <div className="py-24 text-center">
                                     <Heart
                                         size={70}
                                         className="mx-auto text-gray-300"
                                     />
-                                    <h2 className="text-2xl font-bold mt-5">
+                                    <h2 className="text-2xl font-bold text-gray-800 mt-5">
                                         No Favourite Events
                                     </h2>
                                     <p className="text-gray-500 mt-2">
@@ -414,14 +394,12 @@ function FavEvent() {
 
                                     <button
                                         onClick={() => navigate("/event")}
-                                        className="mt-6 px-6 py-3 rounded-xl bg-rose-600 text-white hover:bg-rose-700"
+                                        className="mt-6 px-6 py-3 rounded-xl bg-rose-600 text-white font-medium hover:bg-rose-700 shadow-sm transition-colors"
                                     >
                                         Browse Events
                                     </button>
                                 </div>
-
                             ) : (
-
                                 <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
                                     {favorites
                                         .filter((item) => {
@@ -432,7 +410,6 @@ function FavEvent() {
                                                 .includes(searchQuery.toLowerCase());
                                         })
                                         .map((item) => {
-
                                             const event = item.event || item;
                                             return (
                                                 <motion.div
@@ -443,12 +420,11 @@ function FavEvent() {
                                                         y: -6,
                                                         scale: 1.02,
                                                     }}
-                                                    className="bg-white rounded-2xl  overflow-hidden shadow-sm hover:shadow-xl cursor-pointer"
+                                                    className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl cursor-pointer"
                                                     onClick={() =>
                                                         navigate(`/booking/${event.id}`)
                                                     }
                                                 >
-
                                                     <div className="relative">
                                                         <img
                                                             src={getImageUrl(event.image)}
@@ -463,7 +439,7 @@ function FavEvent() {
                                                                 e.stopPropagation();
                                                                 handleRemoveFav(event.id);
                                                             }}
-                                                            className="absolute top-3 right-3 bg-white p-2 rounded-full shadow"
+                                                            className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-md"
                                                         >
                                                             <AnimatePresence>
                                                                 <motion.div>
@@ -477,7 +453,7 @@ function FavEvent() {
                                                     </div>
 
                                                     <div className="p-5">
-                                                        <h3 className="font-bold text-lg line-clamp-1">
+                                                        <h3 className="font-bold text-lg text-gray-900 line-clamp-1">
                                                             {event.title}
                                                         </h3>
                                                         <p className="text-sm text-gray-500 mt-2">
@@ -491,7 +467,7 @@ function FavEvent() {
                                                             ).toDateString()}
                                                         </div>
 
-                                                        <div className="flex justify-between items-center mt-5 pt-4 ">
+                                                        <div className="flex justify-between items-center mt-5 pt-4 border-t border-gray-100">
                                                             <span className="font-bold text-rose-600">
                                                                 ₹{event.price}
                                                             </span>
@@ -513,4 +489,4 @@ function FavEvent() {
     );
 }
 
-export default FavEvent;    
+export default FavEvent;
