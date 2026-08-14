@@ -17,7 +17,6 @@ function Eventadd() {
     const [viewModal, setViewModal] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [showAddForm, setShowAddForm] = useState(false);
-
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const navigate = useNavigate();
@@ -103,20 +102,11 @@ function Eventadd() {
 
         try {
             const res = await removeEvent(id);
-
             alert("Delete Success");
-            console.log(res);
-
             fetchEvent();
         } catch (err) {
-            console.log(err);
-            console.log(err.response);
-
-            alert(
-                err.response?.status +
-                " : " +
-                JSON.stringify(err.response?.data)
-            );
+            console.error(err);
+            alert(err.response?.status + " : " + JSON.stringify(err.response?.data));
         }
     };
 
@@ -127,17 +117,38 @@ function Eventadd() {
 
     return (
         <div className="min-h-screen bg-[#1f2533] text-gray-100 flex font-sans">
+            {/* Top Navbar */}
+            <nav className="fixed top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-8 bg-[#2b3141] border-b border-gray-700/50 shadow-md">
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                        className="md:hidden text-gray-400 hover:text-white focus:outline-none"
+                        aria-label="Toggle Navigation"
+                    >
+                        {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+                    </button>
+                    <p className="text-lg sm:text-xl font-black tracking-tight text-white uppercase">
+                        EVENT<span className="text-[#df183a]">HUB</span> 
+                        <span className="hidden sm:inline-block text-xs font-semibold text-gray-400 normal-case border-l border-gray-600 pl-2 ml-2">Admin</span>
+                    </p>
+                </div>
+                <div className="flex items-center gap-4">
+                    <button onClick={handleLogout} className="flex items-center gap-2 border border-gray-600 text-gray-300 text-xs font-bold rounded-lg px-4 py-2 hover:bg-[#f84464] hover:text-white hover:border-[#f84464] transition-all">
+                        <LogOut size={14} /> Logout
+                    </button>
+                </div>
+            </nav>
 
+            {/* Mobile Drawer Overlay */}
             {isSidebarOpen && (
                 <div
-                    className="fixed inset-0 z-40 md:hidden"
+                    className="fixed inset-0 bg-black/60 z-40 md:hidden"
                     onClick={() => setIsSidebarOpen(false)}
                 />
             )}
-            {/* Sidebar */}
-            <aside className={`fixed  left-0 top-16 bottom-0 bg-[#2b3144] border-r border-gray-700/50 p-6 z-50 transition-transform duration-300 w-64 
-                ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:block`}>
 
+            {/* Sidebar Navigation */}
+            <aside className={`fixed left-0 top-16 bottom-0 bg-[#2b3144] border-r border-gray-700/50 p-6 z-50 transition-transform duration-300 w-64 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
                 <nav className="space-y-2">
                     <Link to="/user" className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-[#1f2533] hover:text-white rounded-xl font-medium transition-all">
                         <Users size={18} /> Users
@@ -151,27 +162,7 @@ function Eventadd() {
                 </nav>
             </aside>
 
-            {/* Navbar */}
-            <nav className="fixed top-0 left-0 z-50 w-full h-16 flex items-center justify-between px-4 md:px-8 bg-[#2b3141] border-b border-gray-700/50 shadow-md">
-                <div className="flex items-center gap-4">
-                    <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="md:hidden text-gray-400 hover:text-white">
-                        {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-                    </button>
-                    <p className="text-xl font-black tracking-tight text-white uppercase">
-                        EVENT<span className="text-[#df183a]">HUB</span> <span className="text-xs font-medium text-gray-400 tracking-normal normal-case border-l border-gray-600 pl-2 ml-1">Admin</span>
-                    </p>
-                </div>
-                <div className="flex items-center gap-4">
-                    <button onClick={handleLogout} className="flex items-center gap-2 border border-gray-600 text-gray-300 text-xs font-bold rounded-lg px-4 py-2 hover:bg-[#f84464] hover:text-white hover:border-[#f84464] transition-all">
-                        <LogOut size={14} /> Logout
-                    </button>
-                </div>
-            </nav>
-
-            {/* Mobile Sidebar Backdrop */}
-
-
-            {/* Main Section */}
+            {/* Main Content Area */}
             <main className="flex-1 md:ml-64 pt-24 px-4 md:px-8 pb-12 overflow-x-hidden">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
@@ -179,28 +170,28 @@ function Eventadd() {
                             <h1 className="text-2xl font-black text-white tracking-wide">Event Hub</h1>
                             <p className="text-xs text-gray-400 mt-1">Manage, adjust and create live experiences</p>
                         </div>
-                        <button onClick={() => setShowAddForm(!showAddForm)} className="bg-[#f84464] hover:bg-[#f84464]/90 text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-[#f84464]/10">
+                        <button onClick={() => setShowAddForm(!showAddForm)} className="w-full sm:w-auto bg-[#f84464] hover:bg-[#f84464]/90 text-white px-5 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#f84464]/10">
                             {showAddForm ? <X size={18} /> : <Plus size={18} />} {showAddForm ? "Close Form" : "Create Event"}
                         </button>
                     </div>
 
-                    {/* Add Form Container */}
+                    {/* Add Event Form */}
                     {showAddForm && (
-                        <div className="bg-[#2b3141] p-6 rounded-2xl border border-gray-700/50 mb-8 shadow-xl animate-in fade-in duration-200">
+                        <div className="bg-[#2b3141] p-6 rounded-2xl border border-gray-700/50 mb-8 shadow-xl">
                             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <input name="title" value={eventData.title} placeholder="Event Title" className="p-3 bg-[#1f2533] rounded-xl border border-gray-700 text-sm focus:outline-none focus:border-[#f84464] text-white" onChange={handleChange} required />
                                 <input name="location" value={eventData.location} placeholder="Location / Venue" className="p-3 bg-[#1f2533] rounded-xl border border-gray-700 text-sm focus:outline-none focus:border-[#f84464] text-white" onChange={handleChange} required />
                                 <input name="type" value={eventData.type} placeholder="Event Type (e.g., Concert, Comedy)" className="p-3 bg-[#1f2533] rounded-xl border border-gray-700 text-sm focus:outline-none focus:border-[#f84464] text-white" onChange={handleChange} required />
 
                                 <div className="flex flex-col sm:flex-row gap-2">
-                                    <input name="date" value={eventData.date} type="date" className="w-1/2 p-3 bg-[#1f2533] rounded-xl border border-gray-700 text-sm text-gray-300 focus:outline-none focus:border-[#f84464]" onChange={handleChange} required />
-                                    <input name="date_end" value={eventData.date_end} type="date" className="w-1/2 p-3 bg-[#1f2533] rounded-xl border border-gray-700 text-sm text-gray-300 focus:outline-none focus:border-[#f84464]" onChange={handleChange} />
+                                    <input name="date" value={eventData.date} type="date" className="w-full sm:w-1/2 p-3 bg-[#1f2533] rounded-xl border border-gray-700 text-sm text-gray-300 focus:outline-none focus:border-[#f84464]" onChange={handleChange} required />
+                                    <input name="date_end" value={eventData.date_end} type="date" className="w-full sm:w-1/2 p-3 bg-[#1f2533] rounded-xl border border-gray-700 text-sm text-gray-300 focus:outline-none focus:border-[#f84464]" onChange={handleChange} />
                                 </div>
                                 <input name="price" value={eventData.price} type="number" placeholder="Ticket Price (₹)" className="p-3 bg-[#1f2533] rounded-xl border border-gray-700 text-sm focus:outline-none focus:border-[#f84464] text-white" onChange={handleChange} required />
                                 <input name="capacity" value={eventData.capacity} type="number" placeholder="Total Capacity" className="p-3 bg-[#1f2533] rounded-xl border border-gray-700 text-sm focus:outline-none focus:border-[#f84464] text-white" onChange={handleChange} required />
 
                                 <div className="flex items-center gap-2 bg-[#1f2533] rounded-xl border border-gray-700 px-4 py-2">
-                                    <Upload size={16} className="text-gray-400" />
+                                    <Upload size={16} className="text-gray-400 shrink-0" />
                                     <input type="file" accept="image/*" className="text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-bold file:bg-[#f84464] file:text-white cursor-pointer w-full text-gray-400" onChange={handleFileChange} required />
                                 </div>
 
@@ -210,7 +201,7 @@ function Eventadd() {
                         </div>
                     )}
 
-                    {/* Table View */}
+                    {/* Event Table View */}
                     <div className="bg-[#2b3141] rounded-2xl border border-gray-700/50 shadow-xl overflow-x-auto">
                         <table className="w-full text-left min-w-[600px]">
                             <thead>
@@ -221,17 +212,16 @@ function Eventadd() {
                                     <th className="px-6 py-4 text-right">Management</th>
                                 </tr>
                             </thead>
-
                             <tbody className="divide-y divide-gray-700/40">
                                 {events.map((event) => (
                                     <tr key={event.id} className="hover:bg-[#1f2533]/40 transition-all">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <img src={
-                                                    event.image
-                                                        ? (event.image.startsWith('http') ? event.image : `${BASE_URLs}${event.image}`)
-                                                        : "https://via.placeholder.com/400x600"
-                                                } className="w-12 h-12 rounded-xl object-cover border border-gray-700" alt="" />
+                                                <img
+                                                    src={event.image ? (event.image.startsWith('http') ? event.image : `${BASE_URLs}${event.image}`) : "https://via.placeholder.com/400x600"}
+                                                    className="w-12 h-12 rounded-xl object-cover border border-gray-700 shrink-0"
+                                                    alt=""
+                                                />
                                                 <div>
                                                     <p className="text-sm font-bold text-white mb-0.5">{event.title}</p>
                                                     <div className="flex items-center gap-2">
@@ -265,44 +255,60 @@ function Eventadd() {
                 </div>
             </main>
 
-            {/* DESCRIPTION VIEW MODAL */}
+            {/* View Overview Modal */}
             {viewModal && selectedEvent && (
-                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-[110] p-4 animate-in fade-in duration-200">
-                    <div className="bg-[#2b3141] rounded-3xl w-full max-w-lg p-6 relative shadow-2xl border border-gray-700 max-h-[90vh] overflow-y-auto">
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-[110] p-4">
+                    <div className="bg-[#2b3141] rounded-3xl w-full max-w-lg p-6 relative shadow-2xl border border-gray-700 max-h-[85vh] flex flex-col">
                         <button onClick={() => setViewModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white bg-[#1f2533] rounded-full p-1.5 border border-gray-700">
                             <X size={16} />
                         </button>
-                        <div className="flex items-center gap-4 mb-6 mt-2">
-                            <img src={selectedEvent.image ? `${BASE_URLs}${selectedEvent.image}` : "/placeholder.png"} className="w-16 h-16 rounded-2xl object-cover border border-gray-700 shadow-md" alt="" />
+                        <div className="flex items-center gap-4 mb-6 mt-2 shrink-0">
+
+                            {/* UPDATED IMAGE TAG */}
+                            <img
+                                src={
+                                    selectedEvent.image
+                                        ? (selectedEvent.image.startsWith('http')
+                                            ? selectedEvent.image
+                                            : `${BASE_URLs}${selectedEvent.image.startsWith('/') ? '' : '/'}${selectedEvent.image}`)
+                                        : "/placeholder.png"
+                                }
+                                className="w-16 h-16 rounded-2xl object-cover border border-gray-700 shadow-md shrink-0"
+                                alt={selectedEvent.title || "Event thumbnail"}
+                            />
+
                             <div>
                                 <h2 className="text-lg font-bold text-white">{selectedEvent.title}</h2>
-                                <p className="text-xs text-[#f84464] font-semibold uppercase tracking-wider mt-0.5">{selectedEvent.location} • {selectedEvent.type}</p>
+                                <p className="text-xs text-[#f84464] font-semibold uppercase tracking-wider mt-0.5">
+                                    {selectedEvent.location} • {selectedEvent.type}
+                                </p>
                             </div>
                         </div>
-                        <div className="bg-[#1f2533] rounded-2xl p-5 border border-gray-700/50">
+                        <div className="bg-[#1f2533] rounded-2xl p-5 border border-gray-700/50 overflow-y-auto flex-1">
                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Event Description</p>
                             <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line">{selectedEvent.description}</p>
                         </div>
-                        <button onClick={() => setViewModal(false)} className="w-full mt-6 bg-[#f84464] text-white py-3 rounded-xl font-bold transition-all">Close Preview</button>
+                        <button onClick={() => setViewModal(false)} className="w-full mt-6 bg-[#f84464] text-white py-3 rounded-xl font-bold transition-all shrink-0">Close Preview</button>
                     </div>
                 </div>
             )}
 
-            {/* EDIT MODAL */}
+
+            {/* Edit Modal */}
             {modal && (
-                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-[100] p-4 animate-in fade-in duration-200">
-                    <div className="bg-[#2b3141] rounded-3xl w-full max-w-lg p-6 relative shadow-2xl border border-gray-700 max-h-[90vh] overflow-y-auto">
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-[100] p-4">
+                    <div className="bg-[#2b3141] rounded-3xl w-full max-w-lg p-6 relative shadow-2xl border border-gray-700 max-h-[85vh] flex flex-col">
                         <button onClick={() => setModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white bg-[#1f2533] rounded-full p-1.5 border border-gray-700">
                             <X size={16} />
                         </button>
 
-                        <h2 className="text-lg font-bold text-white mb-6 mt-2 tracking-wide">Edit Event Records</h2>
+                        <h2 className="text-lg font-bold text-white mb-4 mt-2 tracking-wide shrink-0">Edit Event Records</h2>
 
-                        <form onSubmit={handleEditSubmit} className="space-y-4">
+                        <form onSubmit={handleEditSubmit} className="space-y-4 overflow-y-auto pr-1 flex-1">
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Title & Dates</label>
                                 <input name="title" className="w-full p-3 bg-[#1f2533] rounded-xl border border-gray-700 text-sm text-white focus:outline-none focus:border-[#f84464]" value={eventDataEdit.title} onChange={handleChangeEdit} />
-                                <div className="grid grid-cols-2 gap-3 mt-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
                                     <div className="space-y-1">
                                         <span className="text-[9px] text-gray-400 font-medium uppercase">Start Date</span>
                                         <input name="date" type="date" className="w-full p-3 bg-[#1f2533] rounded-xl border border-gray-700 text-sm text-gray-300 focus:outline-none" value={eventDataEdit.date} onChange={handleChangeEdit} />
@@ -319,7 +325,7 @@ function Eventadd() {
                                 <textarea name="description" className="w-full p-3 bg-[#1f2533] rounded-xl border border-gray-700 h-24 resize-none text-sm text-white focus:outline-none focus:border-[#f84464]" value={eventDataEdit.description} onChange={handleChangeEdit} />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Price (₹)</label>
                                     <input name="price" type="number" className="w-full p-3 bg-[#1f2533] rounded-xl border border-gray-700 text-sm text-white focus:outline-none" value={eventDataEdit.price} onChange={handleChangeEdit} />
@@ -344,13 +350,13 @@ function Eventadd() {
                                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Update Asset Image</label>
                                 <div className="flex items-center gap-3 bg-[#1f2533] rounded-xl border border-gray-700 p-2.5">
                                     {eventDataEdit.image && !(eventDataEdit.image instanceof File) && (
-                                        <img src={`${BASE_URLs}${eventDataEdit.image}`} className="w-8 h-8 object-cover rounded-lg" alt="Current" />
+                                        <img src={`${BASE_URLs}${eventDataEdit.image}`} className="w-8 h-8 object-cover rounded-lg shrink-0" alt="Current" />
                                     )}
                                     <input type="file" accept="image/*" className="text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-bold file:bg-gray-700 file:text-white cursor-pointer w-full text-gray-400" onChange={handleFileChangeEdit} />
                                 </div>
                             </div>
 
-                            <button type="submit" className="w-full bg-[#f84464] hover:bg-[#f84464]/90 text-white py-3.5 rounded-xl font-bold tracking-wide mt-4 transition-all shadow-md">
+                            <button type="submit" className="w-full bg-[#f84464] hover:bg-[#f84464]/90 text-white py-3.5 rounded-xl font-bold tracking-wide mt-4 transition-all shadow-md shrink-0">
                                 Save Modifications
                             </button>
                         </form>
